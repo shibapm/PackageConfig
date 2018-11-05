@@ -44,7 +44,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/JohnSundell/Marathon.git", from: "3.1.0"),
         .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.1.0"),
-+        .package(url: "https://github.com/orta/PackageConfig.git", from: "1.0.0"),
++        .package(url: "https://github.com/orta/PackageConfig.git", from: "0.0.1"),
     ],
     targets: [
         .target(name: "Danger", dependencies: ["ShellOut"]),
