@@ -48,7 +48,8 @@ let package = Package(
     ],
     targets: [
         .target(name: "Danger", dependencies: ["ShellOut"]),
-+        .target(name: "Runner", dependencies: ["Danger", "MarathonCore", ""PackageConfig"]),
+-        .target(name: "Runner", dependencies: ["Danger", "MarathonCore"]),
++        .target(name: "Runner", dependencies: ["Danger", "MarathonCore", "PackageConfig"]),
         .testTarget(name: "DangerTests", dependencies: ["Danger"]),
     ],
 )
