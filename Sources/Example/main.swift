@@ -1,5 +1,8 @@
 import PackageConfig
 import Foundation
+import TypePreservingCodingAdapter
 
-let config = getPackageConfig()
-print(config["linter"])
+let adapter = TypePreservingCodingAdapter().register(aliased: ExampleConfiguration.self)
+let config = PackageConfig.load(adapter)
+
+print(config?[package: "example"])

@@ -9,13 +9,15 @@ let package = Package(
         .library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
         .executable(name: "package-config-example", targets: ["Example"])
     ],
-    dependencies: [],
+    dependencies: [
+		.package(url: "https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git", .branch("master")),
+	],
     targets: [
         // The lib
-        .target(name: "PackageConfig", dependencies: []),
+        .target(name: "PackageConfig", dependencies: ["TypePreservingCodingAdapter"]),
 
         // The app I use to verify it all works
-        .target(name: "Example", dependencies: ["PackageConfig"]),
+        .target(name: "Example", dependencies: ["PackageConfig", "TypePreservingCodingAdapter"]),
         // Not used
         .testTarget(name: "PackageConfigTests", dependencies: ["PackageConfig"]),
     ]
@@ -24,9 +26,13 @@ let package = Package(
 #if canImport(PackageConfig)
 import PackageConfig
 
-let config = PackageConfig([
-    "danger" : ["disable"],
-    "linter": ["rules": ["allowSomething"]]
-])
+let config = PackageConfig(
+	configurations: [
+		"example": ExampleConfiguration(value: "example configuration value")
+	],
+	adapter: TypePreservingCodingAdapter()
+		.register(aliased: ExampleConfiguration.self)
+)
+
 #endif
 
