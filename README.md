@@ -1,8 +1,6 @@
 # PackageConfig
 
-A Swift Package that allows you to define configuration settings inside a `Package.swift` - this is so that tools
-can all keep their configs consolidated inside a single place. Tool builders use this dependency to grab their config
-settings.
+A Swift Package that allows you to define configuration settings inside a `Package.swift` - this is so that tools can all keep their configs consolidated inside a single place. Tool builders use this dependency to grab their config settings.
 
 ### User writes:
 

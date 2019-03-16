@@ -119,7 +119,7 @@ extension PackageConfig {
 		let path = NSTemporaryDirectory()
 		let packageConfigJSON = path + "package-config.json"
 
-		print("path")
+		print(path)
 
 		guard let data = fileManager.contents(atPath: packageConfigJSON) else {
 			// Package Manifest did not contain a config object at all
