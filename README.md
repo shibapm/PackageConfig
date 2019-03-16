@@ -115,11 +115,11 @@ And grab the bit out after the first sandbox. I then changed the final arg to `-
 I run this command:
 
 ```sh
-swift build; env DEBUG="*" ./.build/x86_64-apple-macosx10.10/debug/package-config-example
+swift build; env DEBUG="*" swift run package-config-example
 ```
 
 if you don't use fish:
 
 ```sh
-swift build; DEBUG="*" ./.build/x86_64-apple-macosx10.10/debug/package-config-example
+swift build; DEBUG="*" swift run package-config-example
 ```
