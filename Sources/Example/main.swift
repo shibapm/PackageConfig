@@ -5,4 +5,4 @@ import TypePreservingCodingAdapter
 let adapter = TypePreservingCodingAdapter().register(aliased: ExampleConfiguration.self)
 let config = PackageConfig.load(adapter)
 
-print(config?[package: "example"])
+print(config?[package: .example])

@@ -5,9 +5,9 @@ import Foundation
 /// A facade to decorate any configurations we might think of
 public struct PackageConfig {
 
-	private let configurations: [String: Aliased]
+	private let configurations: [PackageName: Aliased]
 
-	public init(configurations: [String: Aliased], adapter: TypePreservingCodingAdapter) {
+	public init(configurations: [PackageName: Aliased], adapter: TypePreservingCodingAdapter) {
 		self.configurations = configurations
 		write(adapter: adapter)
 	}
@@ -18,38 +18,26 @@ public struct PackageConfig {
 	}
 
 	/// Provides a specific package configuation by packageName
-	public subscript(package packageName: String) -> Aliased? {
+	public subscript(package packageName: PackageName) -> Aliased? {
 		get {
 			return configurations[packageName]
 		}
 	}
 }
 
-/// Just an example configuration to test against
-public struct ExampleConfiguration: Aliased {
-
-	let value: String
-
-	public init(value: String) {
-		self.value = value
-	}
-
-	public static var alias: Alias = "ExampleConfiguration"
-}
-
 extension PackageConfig: Codable {
 
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
-		let keysAndValues = try container.decode([String: Wrap].self).map { package, wrap in
+		let keysAndValues = try container.decode([PackageName: Wrap].self).map { package, wrap in
 			(package, wrap.wrapped as! Aliased)
 		}
-		self.configurations = [String: Aliased](uniqueKeysWithValues: keysAndValues)
+		self.configurations = [PackageName: Aliased](uniqueKeysWithValues: keysAndValues)
 	}
 
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
-		let wraps = [String: Wrap](uniqueKeysWithValues: configurations.map { (package, configuration) in
+		let wraps = [PackageName: Wrap](uniqueKeysWithValues: configurations.map { (package, configuration) in
 			(package, Wrap(wrapped: configuration, strategy: .alias))
 		})
 		try container.encode(wraps)

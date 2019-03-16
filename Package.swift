@@ -28,11 +28,10 @@ import PackageConfig
 
 let config = PackageConfig(
 	configurations: [
-		"example": ExampleConfiguration(value: "example configuration value")
+		.example: ExampleConfiguration(value: "example configuration value")
 	],
 	adapter: TypePreservingCodingAdapter()
 		.register(aliased: ExampleConfiguration.self)
 )
-
 #endif
 
