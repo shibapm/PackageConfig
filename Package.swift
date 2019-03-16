@@ -10,7 +10,7 @@ let package = Package(
         .executable(name: "package-config-example", targets: ["Example"])
     ],
     dependencies: [
-		.package(url: "https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git", .branch("master")),
+		.package(url: "https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git", from: "1.0.0"),
 	],
     targets: [
         // The lib

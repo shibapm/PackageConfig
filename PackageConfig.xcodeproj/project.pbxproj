@@ -34,6 +34,8 @@
 /* Begin PBXBuildFile section */
 		789A035E223BDC8D00007369 /* Aliased.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789A035D223BDC8D00007369 /* Aliased.swift */; };
 		789A0360223BDCB700007369 /* PackageConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789A035F223BDCB700007369 /* PackageConfig.swift */; };
+		78AB289F223D246B00B2296B /* PackageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AB289D223D237600B2296B /* PackageName.swift */; };
+		78AB28A1223D24A300B2296B /* ExampleConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AB28A0223D24A300B2296B /* ExampleConfiguration.swift */; };
 		OBJ_35 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* main.swift */; };
 		OBJ_37 /* PackageConfig.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "PackageConfig::PackageConfig::Product" /* PackageConfig.framework */; };
 		OBJ_38 /* TypePreservingCodingAdapter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "TypePreservingCodingAdapter::TypePreservingCodingAdapter::Product" /* TypePreservingCodingAdapter.framework */; };
@@ -107,6 +109,8 @@
 /* Begin PBXFileReference section */
 		789A035D223BDC8D00007369 /* Aliased.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aliased.swift; sourceTree = "<group>"; };
 		789A035F223BDCB700007369 /* PackageConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageConfig.swift; sourceTree = "<group>"; };
+		78AB289D223D237600B2296B /* PackageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageName.swift; sourceTree = "<group>"; };
+		78AB28A0223D24A300B2296B /* ExampleConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleConfiguration.swift; sourceTree = "<group>"; };
 		OBJ_14 /* PackageConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageConfigTests.swift; sourceTree = "<group>"; };
 		OBJ_15 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		OBJ_18 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = Package.swift; path = "/Users/igor/development/libraries/PackageConfig/.build/checkouts/Type-Preserving-Coding-Adapter.git--4237871635319230087/Package.swift"; sourceTree = "<group>"; };
@@ -166,6 +170,8 @@
 			children = (
 				789A035D223BDC8D00007369 /* Aliased.swift */,
 				789A035F223BDCB700007369 /* PackageConfig.swift */,
+				78AB289D223D237600B2296B /* PackageName.swift */,
+				78AB28A0223D24A300B2296B /* ExampleConfiguration.swift */,
 			);
 			name = PackageConfig;
 			path = Sources/PackageConfig;
@@ -223,7 +229,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -232,7 +238,6 @@
 				OBJ_16 /* Dependencies */,
 				OBJ_25 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -368,7 +373,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_25 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -399,6 +404,8 @@
 			buildActionMask = 0;
 			files = (
 				789A0360223BDCB700007369 /* PackageConfig.swift in Sources */,
+				78AB28A1223D24A300B2296B /* ExampleConfiguration.swift in Sources */,
+				78AB289F223D246B00B2296B /* PackageName.swift in Sources */,
 				789A035E223BDC8D00007369 /* Aliased.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

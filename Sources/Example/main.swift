@@ -1,8 +1,10 @@
+
 import PackageConfig
-import Foundation
-import TypePreservingCodingAdapter
 
-let adapter = TypePreservingCodingAdapter().register(aliased: ExampleConfiguration.self)
+let adapter = TypePreservingCodingAdapter()
+	.register(aliased: ExampleConfiguration.self)
+
 let config = PackageConfig.load(adapter)
+let exampleConfiguration = config?[package: .example] as? ExampleConfiguration
 
-print(config?[package: .example])
+print(exampleConfiguration!)
