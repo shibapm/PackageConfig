@@ -7,7 +7,6 @@ A Swift Package that allows you to define configuration settings inside a `Packa
 ```swift
 // swift-tools-version:4.0
 import PackageDescription
-import YourPackage
 
 // Traditional Package.swift
 
@@ -59,12 +58,14 @@ let package = Package(
 )
 ```
 
-To grab your configuration:
+Define your Configuration and extend PackageName with your package name:
 
 ```swift
 import PackageConfig
 
-// just an example, it can be watever you want as long as it's Codable
+// Define your config type.
+// Just an example, it can be watever you want as long as it's `Codable`.
+// It must conform to `Aliased` and provide an alias.
 public struct YourPackageConfig: Aliased { 
     
     public let info: [String]
@@ -75,17 +76,26 @@ public struct YourPackageConfig: Aliased {
     }
 }
 
+// Define your `PackageName` to make it possible to register and get the config by it in PackageConfig.
 extension PackageName {
-    // define your PackageName to make it possible to register the config by it in PackageConfig
+
     public static var yourPackageName: PackageName = "YourPackageName" 
 }
-
-let adapter = TypePreservingCodingAdapter().register(aliased: YourPackageConfig.self)
-let config = PackageConfig.load(adapter)
-print(config?[package: .yourPackageName])
 ```
 
-This will be a simple dictionary where you can. 
+To grab your configuration:
+
+```swift
+import PackageConfig
+
+let adapter = TypePreservingCodingAdapter()
+    .register(aliased: YourPackageConfig.self)
+let config = PackageConfig.load(adapter)
+
+let yourConfig = config?[package: .yourPackageName] as? YourPackageConfig
+
+print(yourConfig)
+```
 
 ----
 
