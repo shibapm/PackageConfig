@@ -26,7 +26,7 @@ import YourPackage
 let adapter = TypePreservingCodingAdapter()
 let config = PackageConfig(
 	configurations: [
-        "yourPackageName": YourPackageConfig(info: ["this", "and", "that", "whatever"]),
+        .yourPackageName: YourPackageConfig(info: ["this", "and", "that", "whatever"]),
     ],
     adapter: TypePreservingCodingAdapter()
     	.register(aliase: YourPackageConfig.self)
@@ -59,25 +59,30 @@ let package = Package(
 )
 ```
 
-Then in your app, you can grab the config via the exposed function `getPackageConfig`.
+To grab your configuration:
 
 ```swift
 import PackageConfig
 
-public struct YourPackageConfig: Aliased { // just an example, it can be watever you want as long as it's codable
+// just an example, it can be watever you want as long as it's Codable
+public struct YourPackageConfig: Aliased { 
     
     public let info: [String]
-    
-    public static var alias: Alias = "YourPackageConfig"
+    public static var alias: Alias = "YourPackageConfig" // alias to preserve type when coding
     
     public init(info: [String]) {
         self.info = info
     }
 }
 
+extension PackageName {
+    // define your PackageName to make it possible to register the config by it in PackageConfig
+    public static var yourPackageName: PackageName = "YourPackageName" 
+}
+
 let adapter = TypePreservingCodingAdapter().register(aliased: YourPackageConfig.self)
 let config = PackageConfig.load(adapter)
-print(config["linter"])
+print(config?[package: .yourPackageName])
 ```
 
 This will be a simple dictionary where you can. 
