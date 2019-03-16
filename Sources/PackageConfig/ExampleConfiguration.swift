@@ -1,17 +1,11 @@
 
-/// Just an example configuration to test against
-public struct ExampleConfiguration: Aliased {
+public struct ExampleConfiguration: Codable, Configuration {
 
 	let value: String
+
+	public static var dynamicLibraries: [String] = []
 
 	public init(value: String) {
 		self.value = value
 	}
-
-	public static var alias: Alias = "ExampleConfiguration"
-}
-
-extension PackageName {
-
-	public static var example: PackageName = "ExampleConfiguration"
 }

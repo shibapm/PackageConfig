@@ -10,14 +10,13 @@ let package = Package(
         .executable(name: "package-config-example", targets: ["Example"])
     ],
     dependencies: [
-		.package(url: "https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git", from: "1.0.0"),
 	],
     targets: [
         // The lib
-        .target(name: "PackageConfig", dependencies: ["TypePreservingCodingAdapter"]),
+        .target(name: "PackageConfig", dependencies: []),
 
         // The app I use to verify it all works
-        .target(name: "Example", dependencies: ["PackageConfig", "TypePreservingCodingAdapter"]),
+        .target(name: "Example", dependencies: ["PackageConfig"]),
         // Not used
         .testTarget(name: "PackageConfigTests", dependencies: ["PackageConfig"]),
     ]
@@ -26,12 +25,6 @@ let package = Package(
 #if canImport(PackageConfig)
 import PackageConfig
 
-let config = PackageConfig(
-	configurations: [
-		.example: ExampleConfiguration(value: "example configuration value")
-	],
-	adapter: TypePreservingCodingAdapter()
-		.register(aliased: ExampleConfiguration.self)
-)
-#endif
+ExampleConfiguration(value: "lol kek").write()
 
+#endif
