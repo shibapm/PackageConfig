@@ -9,6 +9,7 @@ settings.
 ```swift
 // swift-tools-version:4.0
 import PackageDescription
+import YourPackage
 
 // Traditional Package.swift
 
@@ -20,13 +21,18 @@ let package = Package(
 
 // Config lives under the package
 
-#if canImport(PackageConfig)
+#if canImport(PackageConfig) && canImport(YourPackage)
 import PackageConfig
+import YourPackage
 
-let config = PackageConfig([
-    "danger" : ["disable"],
-    "linter": ["rules": ["allowSomething"]]
-])
+let adapter = TypePreservingCodingAdapter()
+let config = PackageConfig(
+	configurations: [
+        "yourPackageName": YourPackageConfig(info: ["this", "and", "that", "whatever"]),
+    ],
+    adapter: TypePreservingCodingAdapter()
+    	.register(aliase: YourPackageConfig.self)
+)
 #endif
 ```
 
@@ -60,7 +66,19 @@ Then in your app, you can grab the config via the exposed function `getPackageCo
 ```swift
 import PackageConfig
 
-let config = getPackageConfig()
+public struct YourPackageConfig: Aliased {
+    
+    public let info: [String]
+    
+    public static var alias: Alias = "YourPackageConfig"
+    
+    public init(info: [String]) {
+        self.info = info
+    }
+}
+
+let adapter = TypePreservingCodingAdapter().register(aliased: YourPackageConfig.self)
+let config = PackageConfig.load(adapter)
 print(config["linter"])
 ```
 
