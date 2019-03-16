@@ -90,11 +90,9 @@ import PackageConfig
 
 let adapter = TypePreservingCodingAdapter()
     .register(aliased: YourPackageConfig.self)
-let config = PackageConfig.load(adapter)
+let yourConfig: YourPackageConfig? = PackageConfig.load(.yourPackageName, adapter: adapter)
 
-let yourConfig = config?[package: .yourPackageName] as? YourPackageConfig
-
-print(yourConfig)
+print(yourConfig!)
 ```
 
 ----
