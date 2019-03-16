@@ -1,98 +1,73 @@
 # PackageConfig
 
-A Swift Package that allows you to define configuration settings inside a `Package.swift` - this is so that tools can all keep their configs consolidated inside a single place. Tool builders use this dependency to grab their config settings.
+A Swift Package that allows you to define configuration settings inside a `Package.swift` - this is so that tools can all keep their configs consolidated inside a single place.
+
+Tool builders use this dependency to grab their config settings.
 
 ### User writes:
 
+At the very bottom of the `Package.swift`
+
 ```swift
-// swift-tools-version:4.0
-import PackageDescription
+#if canImport(ExampleConfig)
+import ExampleConfig
 
-// Traditional Package.swift
-
-let package = Package(
-    name: "danger-swift",
-    // ...
-    swiftLanguageVersions: [4]
-)
-
-// Config lives under the package
-
-#if canImport(PackageConfig) && canImport(YourPackage)
-import PackageConfig
-import YourPackage
-
-let adapter = TypePreservingCodingAdapter()
-let config = PackageConfig(
-	configurations: [
-        .yourPackageName: YourPackageConfig(info: ["this", "and", "that", "whatever"]),
-    ],
-    adapter: TypePreservingCodingAdapter()
-    	.register(aliase: YourPackageConfig.self)
-)
+ExampleConfig(value: "example value").write()
 #endif
 ```
 
 ### Tool-dev writes:
 
-Add this library to your tool's `Package.swift`:
+For the sake of example lets assume your library is called Example then `Package.swift` would look like this:
 
-```diff
+```swift
 let package = Package(
-    name: "danger-swift",
+    name: "Example",
     products: [
-        .library(name: "Danger", type: .dynamic, targets: ["Danger"]),
-        .executable(name: "danger-swift", targets: ["Runner"])
+        // notice that library product with your config should be dynamic
+        .library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
+        .executable(name: "example", targets: ["Example"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/JohnSundell/Marathon.git", from: "3.1.0"),
-        .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.1.0"),
-+        .package(url: "https://github.com/orta/PackageConfig.git", from: "0.0.1"),
+        .package(url: "https://github.com/orta/PackageConfig.git", from: "0.0.2"),
     ],
     targets: [
-        .target(name: "Danger", dependencies: ["ShellOut"]),
--        .target(name: "Runner", dependencies: ["Danger", "MarathonCore"]),
-+        .target(name: "Runner", dependencies: ["Danger", "MarathonCore", "PackageConfig"]),
-        .testTarget(name: "DangerTests", dependencies: ["Danger"]),
-    ],
+        .target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
+        .target(name: "Example", dependencies: ["ExampleConfig"]),
+    ]
 )
 ```
 
-Define your Configuration and extend PackageName with your package name:
+In your `ExampleConfig` target define `ExampleConfig` like this.
 
 ```swift
 import PackageConfig
 
-// Define your config type.
-// Just an example, it can be watever you want as long as it's `Codable`.
-// It must conform to `Aliased` and provide an alias.
-public struct YourPackageConfig: Aliased { 
-    
-    public let info: [String]
-    public static var alias: Alias = "YourPackageConfig" // alias to preserve type when coding
-    
-    public init(info: [String]) {
-        self.info = info
-    }
+// it must be public for you to use in your executable target
+// also you must conform to Codable and PackageConfig
+public struct ExampleConfig: Codable, PackageConfig {
+
+    // here can be whatever you want as long as your config can stay `Codable`
+	let value: String
+
+    // here you define a name of ExampleConfig dynamic library product
+	public static var dynamicLibraries: [String] = ["ExampleConfig"]
+
+    // public init is also a requirement
+	public init(value: String) {
+		self.value = value
+	}
 }
 
-// Define your `PackageName` to make it possible to register and get the config by it in PackageConfig.
-extension PackageName {
 
-    public static var yourPackageName: PackageName = "YourPackageName" 
-}
 ```
 
-To grab your configuration:
+Then in your `main.swift` in `Example` target you can load your config like this:
 
 ```swift
-import PackageConfig
+import ExampleConfig
 
-let adapter = TypePreservingCodingAdapter()
-    .register(aliased: YourPackageConfig.self)
-let yourConfig: YourPackageConfig? = PackageConfig.load(.yourPackageName, adapter: adapter)
-
-print(yourConfig!)
+let config = ExampleConfig.load()
 ```
 
 ----
