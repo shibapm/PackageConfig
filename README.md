@@ -66,7 +66,7 @@ Then in your app, you can grab the config via the exposed function `getPackageCo
 ```swift
 import PackageConfig
 
-public struct YourPackageConfig: Aliased {
+public struct YourPackageConfig: Aliased { // just an example, it can be watever you want as long as it's codable
     
     public let info: [String]
     
