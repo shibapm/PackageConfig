@@ -4,7 +4,6 @@ import PackageConfig
 let adapter = TypePreservingCodingAdapter()
 	.register(aliased: ExampleConfiguration.self)
 
-let config = PackageConfig.load(adapter)
-let exampleConfiguration = config?[package: .example] as? ExampleConfiguration
+let example: ExampleConfiguration? = PackageConfig.load(.example, adapter: adapter)
 
-print(exampleConfiguration!)
+print(example)

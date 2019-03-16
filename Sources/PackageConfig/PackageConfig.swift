@@ -12,6 +12,11 @@ public struct PackageConfig {
 		write(adapter: adapter)
 	}
 
+	/// Loads the specific Configuration if capable
+	public static func load<T: Aliased>(_ packageName: PackageName, adapter: TypePreservingCodingAdapter) -> T? {
+		return read(adapter: adapter)?[package: packageName] as? T
+	}
+
 	/// Loads the Configuration if capable
 	public static func load(_ adapter: TypePreservingCodingAdapter) -> PackageConfig? {
 		return read(adapter: adapter)
