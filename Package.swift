@@ -25,6 +25,6 @@ let package = Package(
 #if canImport(PackageConfig)
 import PackageConfig
 
-ExampleConfiguration(value: "lol kek").write()
+ExampleConfig(value: "example value").write()
 
 #endif

@@ -1,6 +1,6 @@
 
 import PackageConfig
 
-let example = ExampleConfiguration.load()
+let example = ExampleConfig.load()
 
-print(example)
+print(example!)

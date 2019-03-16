@@ -95,9 +95,7 @@ struct Package {
 
 		let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
 		let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
-		// TODO: Handle the
-		// // swift-tools-version:4.2
-		// declarations?
+		#warning("TODO: handle //swift-tools-version:4.2 declarations")
 		let latestSPM = versions.sorted().last!
 		let libraryPathSPM = swiftPMDir + "/" + latestSPM
 

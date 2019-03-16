@@ -1,5 +1,5 @@
 
-public struct ExampleConfiguration: Codable, Configuration {
+public struct ExampleConfig: Codable, PackageConfig {
 
 	let value: String
 
