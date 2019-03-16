@@ -17,8 +17,6 @@ let package = Package(
 
         // The app I use to verify it all works
         .target(name: "Example", dependencies: ["PackageConfig"]),
-        // Not used
-        .testTarget(name: "PackageConfigTests", dependencies: ["PackageConfig"]),
     ]
 )
 
