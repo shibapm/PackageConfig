@@ -3,8 +3,8 @@ import Foundation
 
 enum Writer {
 
-	static func write<T: Codable>(configuration: T) {
-		let packageConfigJSON = NSTemporaryDirectory() + "package-config.json"
+	static func write<T: PackageConfig>(configuration: T) {
+		let packageConfigJSON = NSTemporaryDirectory() + T.fileName
 		let encoder = JSONEncoder()
 		let data = try! encoder.encode(configuration)
 

@@ -3,7 +3,7 @@ import Foundation
 
 enum Loader {
 	static func load<T: PackageConfig>() -> T? {
-		let packageConfigJSON = NSTemporaryDirectory() + "package-config.json"
+		let packageConfigJSON = NSTemporaryDirectory() + T.fileName
 
 		print(packageConfigJSON)
 

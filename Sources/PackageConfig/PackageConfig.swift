@@ -2,6 +2,7 @@
 public protocol PackageConfig: Codable {
 
 	static var dynamicLibraries: [String] { get }
+	static var fileName: String { get }
 
 	static func load() -> Self?
 	func write()
