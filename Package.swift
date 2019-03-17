@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PackageConfig",
     products: [
-		.library(name: "PackageConfig", targets: ["Library"]),
-		.executable(name: "package-config", targets: ["Executable"]),
+		.library(name: "PackageConfig", targets: ["PackageConfig"]),
+		.executable(name: "package-config", targets: ["PackageConfigExecutable"]),
 
 		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
 		.executable(name: "package-config-example", targets: ["Example"])
@@ -15,11 +15,11 @@ let package = Package(
     dependencies: [
     ],
     targets: [
-		.target(name: "Library", dependencies: []),
-		.target(name: "Executable", dependencies: []),
+		.target(name: "PackageConfig", dependencies: []),
+		.target(name: "PackageConfigExecutable", dependencies: []),
 
-		.target(name: "ExampleConfig", dependencies: ["Library"]),
-        .target(name: "Example", dependencies: ["Library", "ExampleConfig"]),
+		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
+        .target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]),
     ]
 )
 
