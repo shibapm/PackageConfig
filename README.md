@@ -127,7 +127,7 @@ While compiling it will try to link list of `dynamicLibraries: [String]` provide
 
 When it get's compiled it will run and when `YourPackage.write()` get's called your package configuration json will be written to temporary directory.
 
-After that the it will try to read that it and decode to `YourPackage` type back to from where you have invoked `load` method.
+After that it will try to read the json and decode it as if it was `YourPackage` type, providing it back to where you have invoked `load` method.
 
 # Debugging
 
