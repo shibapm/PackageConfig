@@ -6,14 +6,43 @@ Tool builders use this dependency to grab their config settings.
 
 ### User writes:
 
+Anywhere in the list of targets in `Package.swift`
+
+```swift
+.target(name: "PackageConfigs", dependencies: [
+    "PackageConfig", // PackageConfig library
+    "ExampleConfig" // your library config dylib
+])
+```
+
 At the very bottom of the `Package.swift`
 
 ```swift
-#if canImport(ExampleConfig)
+#if canImport(ExampleConfig) // your library config dynamic library
 import ExampleConfig
 
 ExampleConfig(value: "example value").write()
 #endif
+```
+
+If more than one dependency uses `PackageConfig` be sure to wrap each in 
+
+```swift
+#if canImport(SomeLibraryConfig)
+import SomeLibraryConfig
+
+SomeLibraryConfig().write()
+#endif
+```
+
+Also be sure to invoke `write` method of the `Config` otherwise this won't work.
+
+And then to use your executable user would need to run this in the same directory as his/her project `Package.swift`:
+
+```bash
+swift run resolve			# resolves package dependencies
+swift run package-config	# compiles PackageConfigs target, thus ensures dylibs are built
+swift run example			# runs your library executable
 ```
 
 ### Tool-dev writes:
@@ -24,7 +53,7 @@ For the sake of example lets assume your library is called Example then `Package
 let package = Package(
     name: "Example",
     products: [
-        // notice that library product with your config should be dynamic
+        // notice that library product with your library config should be dynamic
         .library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
         .executable(name: "example", targets: ["Example"]),
     ],
@@ -44,13 +73,13 @@ In your `ExampleConfig` target define `ExampleConfig` like this.
 import PackageConfig
 
 // it must be public for you to use in your executable target
-// also you must conform to Codable and PackageConfig
+// also you must conform to `Codable` and `PackageConfig`
 public struct ExampleConfig: Codable, PackageConfig {
 
     // here can be whatever you want as long as your config can stay `Codable`
 	let value: String
 
-    // here you define a name of ExampleConfig dynamic library product
+    // here you must define a name of ExampleConfig dynamic library product to be sure it gets linked when loading config
 	public static var dynamicLibraries: [String] = ["ExampleConfig"]
 
     // public init is also a requirement
@@ -58,11 +87,9 @@ public struct ExampleConfig: Codable, PackageConfig {
 		self.value = value
 	}
 }
-
-
 ```
 
-Then in your `main.swift` in `Example` target you can load your config like this:
+Then for example in your `main.swift` in `Example` target you can load your config like this:
 
 ```swift
 import ExampleConfig
