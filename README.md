@@ -40,9 +40,9 @@ Also be sure to invoke `write` method of the `Config` otherwise this won't work.
 And then to use your executable user would need to run this in the same directory as his/her project `Package.swift`:
 
 ```bash
-swift run resolve			# resolves package dependencies
+swift run resolve		# resolves package dependencies
 swift run package-config	# compiles PackageConfigs target, thus ensures dylibs are built
-swift run example			# runs your library executable
+swift run example		# runs your library executable
 ```
 
 ### Tool-dev writes:
@@ -77,15 +77,15 @@ import PackageConfig
 public struct ExampleConfig: Codable, PackageConfig {
 
     // here can be whatever you want as long as your config can stay `Codable`
-	let value: String
+    let value: String
 
     // here you must define a name of ExampleConfig dynamic library product to be sure it gets linked when loading config
-	public static var dynamicLibraries: [String] = ["ExampleConfig"]
+    public static var dynamicLibraries: [String] = ["ExampleConfig"]
 
     // public init is also a requirement
-	public init(value: String) {
-		self.value = value
-	}
+    public init(value: String) {
+	self.value = value
+    }
 }
 ```
 
@@ -127,7 +127,7 @@ While compiling it will try to link list of `dynamicLibraries: [String]` provide
 
 When it get's compiled it will run and when `YourPackage.write()` get's called your package configuration json will be written to temporary directory.
 
-After that the it will try to read that it and decode to `YourPackage` type back to from where you have invoked `load` method.
+After that it will try to read the json and decode it as if it was `YourPackage` type, providing it back to where you have invoked `load` method.
 
 # Debugging
 
