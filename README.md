@@ -40,7 +40,6 @@ Also be sure to invoke `write` method of the `Config` otherwise this won't work.
 And then to use your executable user would need to run this in the same directory as his/her project `Package.swift`:
 
 ```bash
-swift run resolve		# resolves package dependencies
 swift run package-config	# compiles PackageConfigs target, thus ensures dylibs are built
 swift run example		# runs your library executable
 ```
@@ -96,6 +95,10 @@ import ExampleConfig
 
 let config = ExampleConfig.load()
 ```
+
+### Notes for library developers
+
+Since `YourConfig` target is a dynamic library you must ensure that you have built it everytime when using either `read` or `write`  methods of `PackageConfig`. When building from terminal this can be done by just running `swift build`.
 
 ----
 
