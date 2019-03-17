@@ -119,6 +119,16 @@ let config = ExampleConfig.load()
   This might be everything, so if in a month or two nothing really changes
   I'll v1 after this release.
 
+# How it all works
+
+When you invoke `YourPackage.load()` it will compile the `Package.swift` in the current directory the using `swiftc`.
+
+While compiling it will try to link list of `dynamicLibraries: [String]` provided by your custom config conforming to `PackageConfig`.
+
+When it get's compiled it will run and when `YourPackage.write()` get's called your package configuration json will be written to temporary directory.
+
+After that the it will try to read that it and decode to `YourPackage` type back to from where you have invoked `load` method.
+
 # Debugging
 
 ### How to see the JSON from a Package.swift file
