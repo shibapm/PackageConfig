@@ -6,22 +6,23 @@ import PackageDescription
 let package = Package(
     name: "PackageConfig",
     products: [
-        .library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
+		.library(name: "PackageConfig", targets: ["PackageConfig"]),
+
+		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
         .executable(name: "package-config-example", targets: ["Example"])
     ],
     dependencies: [
 	],
     targets: [
-        // The lib
         .target(name: "PackageConfig", dependencies: []),
 
-        // The app I use to verify it all works
-        .target(name: "Example", dependencies: ["PackageConfig"]),
+		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
+        .target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]),
     ]
 )
 
-#if canImport(PackageConfig)
-import PackageConfig
+#if canImport(ExampleConfig)
+import ExampleConfig
 
 ExampleConfig(value: "example value").write()
 

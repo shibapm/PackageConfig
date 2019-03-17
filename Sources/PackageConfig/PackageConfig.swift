@@ -10,7 +10,7 @@ public protocol PackageConfig: Codable {
 extension PackageConfig {
 
 	public static func load() -> Self? {
-		Package(dynamicLibraries: dynamicLibraries + ["PackageConfig"]).compile()
+		Package(dynamicLibraries: dynamicLibraries).compile()
 		return Loader.load()
 	}
 

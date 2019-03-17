@@ -23,11 +23,16 @@ struct Package {
 		proc.launchPath = swiftC
 		proc.arguments = args
 
+		print(args)
+
 		debugLog("CMD: \(swiftC) \( args.joined(separator: " "))")
 
 		let standardOutput = FileHandle.standardOutput
 		proc.standardOutput = standardOutput
 		proc.standardError = standardOutput
+
+
+		
 
 		// Evaluation of the package swift code will end up
 		// creating a file in the tmpdir that stores the JSON
@@ -62,6 +67,8 @@ struct Package {
 			".build/x86_64-unknown-linux/debug",
 			".build/release",
 		]
+
+		#warning("needs to be improved")
 
 		func isLibPath(path: String) -> Bool {
 			return fileManager.fileExists(atPath: path + "/lib\(library).dylib") || // macOS
