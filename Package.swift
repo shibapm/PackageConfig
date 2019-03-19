@@ -10,7 +10,7 @@ let package = Package(
 		.executable(name: "package-config", targets: ["PackageConfigExecutable"]),
 
 		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
-		.executable(name: "package-config-example", targets: ["Example"])
+		.executable(name: "package-config-example", targets: ["Example"]),
     ],
     dependencies: [
     ],
@@ -19,7 +19,9 @@ let package = Package(
 		.target(name: "PackageConfigExecutable", dependencies: []),
 
 		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
-        .target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]),
+		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig", "ShitConfig"]),
+
+		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]),
     ]
 )
 
@@ -27,5 +29,4 @@ let package = Package(
 import ExampleConfig
 
 ExampleConfig(value: "example value").write()
-
 #endif

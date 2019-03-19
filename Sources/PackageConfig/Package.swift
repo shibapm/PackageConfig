@@ -1,66 +1,59 @@
 
 import Foundation
 
-struct Package {
-
-	let dynamicLibraries: [String]
-
-	func compile() {
-		let swiftC = runXCRun(tool: "swiftc")
-
-		var args = [String]()
-		args += ["--driver-mode=swift"] // Eval in swift mode, I think?
-
-		args += getSwiftPMManifestArgs(swiftPath: swiftC) // SwiftPM lib
-
-		args += libraryLinkingArguments() // link libraries
-
-		args += ["-suppress-warnings"] // SPM does that too
-		args += ["Package.swift"] // The Package.swift in the CWD
+enum Package {
+	
+	static func compile() throws {
+		let swiftC = try runXCRun(tool: "swiftc")
+		let process = Process()
+		let linkedLibraries = try libraryLinkingArguments()
+		var arguments = [String]()
+			arguments += ["--driver-mode=swift"] // Eval in swift mode, I think?
+			arguments += getSwiftPMManifestArgs(swiftPath: swiftC) // SwiftPM lib
+			arguments += linkedLibraries
+			arguments += ["-suppress-warnings"] // SPM does that too
+		 	arguments += ["Package.swift"] // The Package.swift in the CWD
 
 		// Create a process to eval the Swift Package manifest as a subprocess
-		let proc = Process()
-		proc.launchPath = swiftC
-		proc.arguments = args
 
-		print(args)
+		process.launchPath = swiftC
+		process.arguments = arguments
 
-		debugLog("CMD: \(swiftC) \( args.joined(separator: " "))")
+		debugLog("CMD: \(swiftC) \( arguments.joined(separator: " "))")
+
+
 
 		let standardOutput = FileHandle.standardOutput
-		proc.standardOutput = standardOutput
-		proc.standardError = standardOutput
-
-
-		
+		process.standardOutput = standardOutput
+		process.standardError = standardOutput
 
 		// Evaluation of the package swift code will end up
 		// creating a file in the tmpdir that stores the JSON
 		// settings when a new instance of PackageConfig is created
-		proc.launch()
-		proc.waitUntilExit()
+		process.launch()
+		process.waitUntilExit()
 
 		debugLog("Finished launching swiftc")
 	}
 
-	func runXCRun(tool: String) -> String {
-		let proc = Process()
-		proc.launchPath = "/usr/bin/xcrun"
-		proc.arguments = ["--find", tool]
-
-		debugLog("CMD: \(proc.launchPath!) \( ["--find", tool].joined(separator: " "))")
-
+	static private func runXCRun(tool: String) throws -> String {
+		let process = Process()
 		let pipe = Pipe()
-		proc.standardOutput = pipe
 
-		proc.launch()
-		proc.waitUntilExit()
+		process.launchPath = "/usr/bin/xcrun"
+		process.arguments = ["--find", tool]
+		process.standardOutput = pipe
 
-		let resultsWithNewline = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
-		return resultsWithNewline.trimmingCharacters(in: .whitespacesAndNewlines)
+		debugLog("CMD: \(process.launchPath!) \( ["--find", tool].joined(separator: " "))")
+
+		process.launch()
+		process.waitUntilExit()
+
+		return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
+			.trimmingCharacters(in: .whitespacesAndNewlines)
 	}
 
-	func libraryPath(for library: String) -> String? {
+	static private func libraryPath(for library: String) -> String? {
 		let fileManager = FileManager.default
 		let libPaths = [
 			".build/debug",
@@ -69,6 +62,7 @@ struct Package {
 		]
 
 		#warning("needs to be improved")
+		#warning("consider adding `/usr/lib` to libPath maybe")
 
 		func isLibPath(path: String) -> Bool {
 			return fileManager.fileExists(atPath: path + "/lib\(library).dylib") || // macOS
@@ -78,11 +72,10 @@ struct Package {
 		return libPaths.first(where: isLibPath)
 	}
 
-	func libraryLinkingArguments() -> [String] {
-		return dynamicLibraries.map { libraryName in
+	static private func libraryLinkingArguments() throws -> [String] {
+		return try DynamicLibraries.list().map { libraryName in
 			guard let path = libraryPath(for: libraryName) else {
-				print("PackageConfig: Could not find lib\(libraryName) to link against, is it possible you've not built yet?")
-				exit(1)
+				throw Error("PackageConfig: Could not find lib\(libraryName) to link against, is it possible you've not built yet?")
 			}
 
 			return [
@@ -93,7 +86,7 @@ struct Package {
 		}.reduce([], +)
 	}
 
-	func getSwiftPMManifestArgs(swiftPath: String) -> [String] {
+	static private func getSwiftPMManifestArgs(swiftPath: String) -> [String] {
 		// using "xcrun --find swift" we get
 		// /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
 		// we need to transform it to something like:
@@ -109,5 +102,4 @@ struct Package {
 		debugLog("Using SPM version: \(libraryPathSPM)")
 		return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription"]
 	}
-
 }

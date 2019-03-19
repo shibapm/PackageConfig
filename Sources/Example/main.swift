@@ -1,6 +1,9 @@
 
 import ExampleConfig
 
-let example = ExampleConfig.load()
-
-print(example)
+do {
+	let example = try ExampleConfig.load()
+	print(example)
+} catch {
+	print(error)
+}

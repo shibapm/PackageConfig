@@ -1,18 +1,17 @@
 
 public protocol PackageConfig: Codable {
 
-	static var dynamicLibraries: [String] { get }
 	static var fileName: String { get }
 
-	static func load() -> Self?
+	static func load() throws -> Self
 	func write()
 }
 
 extension PackageConfig {
 
-	public static func load() -> Self? {
-		Package(dynamicLibraries: dynamicLibraries).compile()
-		return Loader.load()
+	public static func load() throws -> Self {
+		try Package.compile()
+		return try Loader.load()
 	}
 
 	public func write() {

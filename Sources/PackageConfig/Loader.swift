@@ -2,16 +2,13 @@
 import Foundation
 
 enum Loader {
-	static func load<T: PackageConfig>() -> T? {
+	static func load<T: PackageConfig>() throws -> T {
 		let packageConfigJSON = NSTemporaryDirectory() + T.fileName
 
-		print(packageConfigJSON)
-
 		guard let data = FileManager.default.contents(atPath: packageConfigJSON) else {
-			debugLog("Could not find a file at \(packageConfigJSON) - so returning an empty object")
-			return nil
+			throw Error("Could not find a file at \(packageConfigJSON) - something went wrong with compilation step probably")
 		}
 
-		return try! JSONDecoder().decode(T.self, from: data)
+		return try JSONDecoder().decode(T.self, from: data)
 	}
 }
