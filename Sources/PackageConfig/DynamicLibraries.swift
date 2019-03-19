@@ -40,6 +40,11 @@ enum DynamicLibraries {
 			.reversed()
 			.drop { "]".contains($0) }
 			.reversed()
+			.map(String.init)
+			.map {
+				guard let comment = $0.range(of: "//")?.lowerBound else { return $0 }
+				return String($0.prefix(comment.encodedOffset))
+			}
 			.joined()
 			.replacingOccurrences(of: "\t", with: "")
 			.replacingOccurrences(of: " ", with: "")
