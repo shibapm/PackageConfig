@@ -19,7 +19,7 @@ let package = Package(
 		.target(name: "PackageConfigExecutable", dependencies: []),
 
 		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
-		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig", "ShitConfig"]),
+		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]),
 
 //		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]),
     ]
