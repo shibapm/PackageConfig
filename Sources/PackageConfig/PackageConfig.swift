@@ -19,7 +19,7 @@ extension PackageConfig {
 	}
 }
 
-import Foundation
+import class Foundation.ProcessInfo
 
 func debugLog(_ message: String) -> Void {
 	let isVerbose = CommandLine.arguments.contains("--verbose") || (ProcessInfo.processInfo.environment["DEBUG"] != nil)

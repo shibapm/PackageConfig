@@ -18,24 +18,18 @@ enum Package {
 		 	arguments += ["Package.swift"] // The Package.swift in the CWD
 
 		// Create a process to eval the Swift Package manifest as a subprocess
-
 		process.launchPath = swiftC
 		process.arguments = arguments
+		process.standardOutput = FileHandle.standardOutput
+		process.standardError = FileHandle.standardOutput
 
 		debugLog("CMD: \(swiftC) \( arguments.joined(separator: " "))")
-
-
-
-		let standardOutput = FileHandle.standardOutput
-		process.standardOutput = standardOutput
-		process.standardError = standardOutput
 
 		// Evaluation of the package swift code will end up
 		// creating a file in the tmpdir that stores the JSON
 		// settings when a new instance of PackageConfig is created
 		process.launch()
 		process.waitUntilExit()
-
 		debugLog("Finished launching swiftc")
 	}
 
@@ -51,7 +45,6 @@ enum Package {
 
 		process.launch()
 		process.waitUntilExit()
-
 		return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
 			.trimmingCharacters(in: .whitespacesAndNewlines)
 	}
