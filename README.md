@@ -6,20 +6,22 @@ Tool builders use this dependency to grab their config settings.
 
 ### User writes:
 
-Anywhere in the list of targets in `Package.swift`
+List all the required package configs anywhere in the list of targets in `Package.swift` like this.
 
 ```swift
+// PackageConfig parses PackageConfigs target in Package.swift to extract list of dylibs to link when compiling Package.swift with configurations
 .target(name: "PackageConfigs", dependencies: [
-    "ExampleConfig" // your library config dylib
+    "ExampleConfig" // some executable configuration definition dylib
 ])
 ```
 
 At the very bottom of the `Package.swift`
 
 ```swift
-#if canImport(ExampleConfig) // your library config dynamic library
+#if canImport(ExampleConfig) // example config dynamic library
 import ExampleConfig
 
+// invoking write is mandatory, otherwise the config won't be written // thanks captain obvious
 ExampleConfig(value: "example value").write()
 #endif
 ```
@@ -34,7 +36,7 @@ SomeLibraryConfig().write()
 #endif
 ```
 
-Also be sure to invoke `write` method of the `Config` otherwise this won't work.
+Be sure to invoke `write` method of the `Config` otherwise this won't work.
 
 And then to use your executable user would need to run this in the same directory as his/her project `Package.swift`:
 
@@ -45,7 +47,7 @@ swift run example		# runs your library executable
 
 ### Tool-dev writes:
 
-For the sake of example lets assume your library is called Example then `Package.swift` would look like this:
+For the sake of example lets assume your library is called **Example** then `Package.swift` would look like this:
 
 ```swift
 let package = Package(
@@ -88,7 +90,7 @@ public struct ExampleConfig: Codable, PackageConfig {
 }
 ```
 
-Then for example in your `main.swift` in `Example` target you can load your config like this:
+Then for example in your `main.swift` in executable `Example` target you can load your config like this:
 
 ```swift
 import ExampleConfig
@@ -129,9 +131,9 @@ Since `YourConfig` target is a dynamic library you must ensure that you have bui
 
 # How it all works
 
-When you invoke `YourPackage.load()` it will compile the `Package.swift` in the current directory the using `swiftc`.
+When you invoke `YourPackage.load()` it will compile the `Package.swift` in the current directory using `swiftc`.
 
-While compiling it will try to link list of `dynamicLibraries: [String]` provided by your custom config conforming to `PackageConfig`.
+While compiling it will try to link list of dynamic libraries listed in `PackageConfigs` target.
 
 When it get's compiled it will run and when `YourPackage.write()` get's called your package configuration json will be written to temporary directory.
 
