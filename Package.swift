@@ -21,7 +21,7 @@ let package = Package(
 		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
 		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig", "ShitConfig"]),
 
-		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]),
+//		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]),
     ]
 )
 
