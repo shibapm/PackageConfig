@@ -1,5 +1,6 @@
 
-import Foundation
+import class Foundation.Process
+import class Foundation.Pipe
 
 enum DynamicLibraries {
 

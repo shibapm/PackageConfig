@@ -1,5 +1,5 @@
 
-import ExampleConfig
+import struct ExampleConfig.ExampleConfig
 
 do {
 	let example = try ExampleConfig.load()

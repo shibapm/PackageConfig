@@ -1,12 +1,12 @@
 
-import Foundation
+import class Foundation.Process
 
 let process = Process()
 let script =
 """
-swift package resolve
 mkdir -p ./Sources/PackageConfigs/
 touch ./Sources/PackageConfigs/PackageConfigs.swift
+swift package resolve
 swift build --target PackageConfigs
 """
 process.launchPath = "/bin/bash"

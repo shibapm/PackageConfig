@@ -1,5 +1,8 @@
 
-import Foundation
+import class Foundation.Process
+import class Foundation.Pipe
+import class Foundation.FileHandle
+import class Foundation.FileManager
 
 enum Package {
 	

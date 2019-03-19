@@ -1,6 +1,5 @@
 
-import Foundation
-import PackageConfig
+import protocol PackageConfig.PackageConfig
 
 public struct ExampleConfig: Codable, PackageConfig {
 

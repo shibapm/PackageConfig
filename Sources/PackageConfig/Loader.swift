@@ -1,5 +1,7 @@
 
-import Foundation
+import func Foundation.NSTemporaryDirectory
+import class Foundation.FileManager
+import class Foundation.JSONDecoder
 
 enum Loader {
 	static func load<T: PackageConfig>() throws -> T {

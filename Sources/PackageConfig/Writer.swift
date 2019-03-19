@@ -1,5 +1,7 @@
 
-import Foundation
+import class Foundation.JSONEncoder
+import class Foundation.FileManager
+import func Foundation.NSTemporaryDirectory
 
 enum Writer {
 
