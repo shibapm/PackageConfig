@@ -10,7 +10,6 @@ Anywhere in the list of targets in `Package.swift`
 
 ```swift
 .target(name: "PackageConfigs", dependencies: [
-    "PackageConfig", // PackageConfig library
     "ExampleConfig" // your library config dylib
 ])
 ```
@@ -40,7 +39,7 @@ Also be sure to invoke `write` method of the `Config` otherwise this won't work.
 And then to use your executable user would need to run this in the same directory as his/her project `Package.swift`:
 
 ```bash
-swift run package-config	# compiles PackageConfigs target, thus ensures dylibs are built
+swift run package-config	# compiles PackageConfigs target, expecting to find a dylib in `.build` directory for each of the listed libraries configs
 swift run example		# runs your library executable
 ```
 
@@ -52,8 +51,9 @@ For the sake of example lets assume your library is called Example then `Package
 let package = Package(
     name: "Example",
     products: [
-        // notice that library product with your library config should be dynamic
+        // notice that product with your library config should be dynamic library in order to produce dylib and allow PackageConfig to link it when building Package.swift
         .library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
+        // 
         .executable(name: "example", targets: ["Example"]),
     ],
     dependencies: [
@@ -78,8 +78,8 @@ public struct ExampleConfig: Codable, PackageConfig {
     // here can be whatever you want as long as your config can stay `Codable`
     let value: String
 
-    // here you must define a name of ExampleConfig dynamic library product to be sure it gets linked when loading config
-    public static var dynamicLibraries: [String] = ["ExampleConfig"]
+   	// here you must define your config fileName which will be used to write and read it to/from temporary directory
+    public static var fileName: String { return "example-config.json" }
 
     // public init is also a requirement
     public init(value: String) {
@@ -93,7 +93,12 @@ Then for example in your `main.swift` in `Example` target you can load your conf
 ```swift
 import ExampleConfig
 
-let config = ExampleConfig.load()
+do {
+    let config = try ExampleConfig.load()
+    print(config)
+} catch {
+    print(error)
+}
 ```
 
 ### Notes for library developers
