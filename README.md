@@ -6,7 +6,15 @@ Tool builders use this dependency to grab their config settings.
 
 ### User writes:
 
-List all the required package configs anywhere in the list of targets in `Package.swift` like this.
+Run this line to have empty source for `PackageConfigs` target generated for you.
+
+```bash
+swift run package-config
+```
+
+First time it should return an error `error: no target named 'PackageConfigs'`.
+
+Now you can list all the required package configs anywhere in the list of targets in `Package.swift` like this.
 
 ```swift
 // PackageConfig parses PackageConfigs target in Package.swift to extract list of dylibs to link when compiling Package.swift with configurations
@@ -38,7 +46,7 @@ SomeLibraryConfig().write()
 
 Be sure to invoke `write` method of the `Config` otherwise this won't work.
 
-And then to use your executable user would need to run this in the same directory as his/her project `Package.swift`:
+And then to use executable user would need to run this in the same directory as his/her project `Package.swift`
 
 ```bash
 swift run package-config	# compiles PackageConfigs target, expecting to find a dylib in `.build` directory for each of the listed libraries configs
