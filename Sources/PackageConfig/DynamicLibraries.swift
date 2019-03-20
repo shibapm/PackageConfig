@@ -27,7 +27,7 @@ enum DynamicLibraries {
 
 		let definition = lines.suffix(from: start)
 			.joined(separator: "\n")
-			.drop { !["["].contains($0) }
+			.drop { !"[".contains($0) }
 			.map(String.init)
 			.joined()
 			.split(separator: "\n")
