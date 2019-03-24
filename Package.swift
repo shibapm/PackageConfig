@@ -6,27 +6,27 @@ import PackageDescription
 let package = Package(
     name: "PackageConfig",
     products: [
-        .library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
-        .executable(name: "package-config-example", targets: ["Example"])
-    ],
-    dependencies: [],
-    targets: [
-        // The lib
-        .target(name: "PackageConfig", dependencies: []),
+		.library(name: "PackageConfig", targets: ["PackageConfig"]),
+		.executable(name: "package-config", targets: ["PackageConfigExecutable"]),
 
-        // The app I use to verify it all works
-        .target(name: "Example", dependencies: ["PackageConfig"]),
-        // Not used
-        .testTarget(name: "PackageConfigTests", dependencies: ["PackageConfig"]),
+		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
+		.executable(name: "package-config-example", targets: ["Example"]),
+    ],
+    dependencies: [
+    ],
+    targets: [
+		.target(name: "PackageConfig", dependencies: []),
+		.target(name: "PackageConfigExecutable", dependencies: []),
+
+		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
+		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]),
+
+//		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]),
     ]
 )
 
-#if canImport(PackageConfig)
-import PackageConfig
+#if canImport(ExampleConfig)
+import ExampleConfig
 
-let config = PackageConfig([
-    "danger" : ["disable"],
-    "linter": ["rules": ["allowSomething"]]
-])
+ExampleConfig(value: "example value").write()
 #endif
-

@@ -1,5 +1,9 @@
-import PackageConfig
-import Foundation
 
-let config = getPackageConfig()
-print(config["linter"])
+import struct ExampleConfig.ExampleConfig
+
+do {
+	let example = try ExampleConfig.load()
+	print(example)
+} catch {
+	print(error)
+}
