@@ -69,6 +69,11 @@ enum Package {
 	}
 
 	static private func libraryLinkingArguments() throws -> [String] {
+        let packageConfigLib = "PackageConfig"
+        guard let packageConfigPath = libraryPath(for: packageConfigLib) else {
+            throw Error("PackageConfig: Could not find lib\(packageConfigLib) to link against, is it possible you've not built yet?")
+        }
+        
 		return try DynamicLibraries.list().map { libraryName in
 			guard let path = libraryPath(for: libraryName) else {
 				throw Error("PackageConfig: Could not find lib\(libraryName) to link against, is it possible you've not built yet?")
@@ -79,8 +84,13 @@ enum Package {
 				"-I", path,
 				"-l\(libraryName)"
 			]
-		}.reduce([], +)
-	}
+        }.reduce([
+            "-L", packageConfigPath,
+            "-I", packageConfigPath,
+            "-l\(packageConfigLib)"
+        ], +)
+    }
+	
 
 	static private func getSwiftPMManifestArgs(swiftPath: String) -> [String] {
 		// using "xcrun --find swift" we get
