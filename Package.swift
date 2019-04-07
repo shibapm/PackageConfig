@@ -30,3 +30,13 @@ import ExampleConfig
 
 ExampleConfig(value: "example value").write()
 #endif
+
+#if canImport(PackageConfig)
+import PackageConfig
+
+PackageConfiguration(["example": [
+    ["example1": ""],
+    "example2",
+    3
+]]).write()
+#endif
