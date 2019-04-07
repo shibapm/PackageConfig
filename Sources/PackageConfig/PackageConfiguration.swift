@@ -28,25 +28,7 @@ public struct PackageConfiguration: PackageConfig {
     }
 }
 
-
-public protocol ConfigType: Codable {
-    var jsonValue: Any { get }
-}
-
-extension Int: ConfigType {
-    public var jsonValue: Any { return self }
-}
-extension String: ConfigType {
-    public var jsonValue: Any { return self }
-}
-extension Double: ConfigType {
-    public var jsonValue: Any { return self }
-}
-extension Bool: ConfigType {
-    public var jsonValue: Any { return self }
-}
-
-public struct AnyType: ConfigType {
+public struct AnyType: Codable {
     public var jsonValue: Any
     
     init(_ jsonValue: Any) {
@@ -75,7 +57,7 @@ public struct AnyType: ConfigType {
         } else if let doubleValue = try? container.decode(Dictionary<String, AnyType>.self) {
             jsonValue = doubleValue
         } else {
-            throw DecodingError.typeMismatch(ConfigType.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Unsupported type"))
+            throw DecodingError.typeMismatch(AnyType.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Unsupported type"))
         }
     }
     
@@ -95,13 +77,13 @@ public struct AnyType: ConfigType {
         } else if let value = jsonValue as? [String: AnyType] {
             try container.encode(value)
         } else {
-            throw DecodingError.typeMismatch(ConfigType.self, DecodingError.Context(codingPath: encoder.codingPath, debugDescription: "Unsupported type"))
+            throw DecodingError.typeMismatch(AnyType.self, DecodingError.Context(codingPath: encoder.codingPath, debugDescription: "Unsupported type"))
         }
     }
     
     func deserialise() throws -> [String: Any] {
         guard let result = deserialiseContent() as? [String: Any] else {
-            throw DecodingError.typeMismatch(ConfigType.self, DecodingError.Context(codingPath: [], debugDescription: "Expected a dictionary [String:Any]"))
+            throw DecodingError.typeMismatch(AnyType.self, DecodingError.Context(codingPath: [], debugDescription: "Expected a dictionary [String:Any]"))
         }
         
         return result
