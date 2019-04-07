@@ -3,14 +3,28 @@ import Foundation
 public struct PackageConfiguration: PackageConfig {
     public static var fileName: String = "package-config"
     
-    public let configuration: [String: AnyType]
+    public let configuration: [String: Any]
     
     public init(_ configuration: [String: Any]) {
-        self.configuration = configuration.mapValues(AnyType.init)
+        self.configuration = configuration
     }
     
     public subscript(string: String) -> Any? {
-        return configuration[string]?.jsonValue
+        return configuration[string]
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let anyType = try container.decode(AnyType.self)
+        
+        configuration = try anyType.deserialise()
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        let anyType = configuration.mapValues(AnyType.init)
+        
+        var container = encoder.singleValueContainer()
+        try container.encode(anyType)
     }
 }
 
@@ -36,7 +50,13 @@ public struct AnyType: ConfigType {
     public var jsonValue: Any
     
     init(_ jsonValue: Any) {
-        self.jsonValue = jsonValue
+        if let value = jsonValue as? [String: Any] {
+            self.jsonValue = value.mapValues(AnyType.init)
+        } else if let value = jsonValue as? [Any] {
+            self.jsonValue = value.map(AnyType.init)
+        } else {
+            self.jsonValue = jsonValue
+        }
     }
     
     public init(from decoder: Decoder) throws {
@@ -76,6 +96,24 @@ public struct AnyType: ConfigType {
             try container.encode(value)
         } else {
             throw DecodingError.typeMismatch(ConfigType.self, DecodingError.Context(codingPath: encoder.codingPath, debugDescription: "Unsupported type"))
+        }
+    }
+    
+    func deserialise() throws -> [String: Any] {
+        guard let result = deserialiseContent() as? [String: Any] else {
+            throw DecodingError.typeMismatch(ConfigType.self, DecodingError.Context(codingPath: [], debugDescription: "Expected a dictionary [String:Any]"))
+        }
+        
+        return result
+    }
+    
+    private func deserialiseContent() -> Any {
+        if let value = jsonValue as? [String: AnyType] {
+            return value.mapValues { $0.deserialiseContent() }
+        } else if let value = jsonValue as? [AnyType] {
+            return value.map { $0.deserialiseContent() }
+        } else {
+            return jsonValue
         }
     }
 }
