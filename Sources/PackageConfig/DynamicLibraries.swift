@@ -18,7 +18,7 @@ enum DynamicLibraries {
 			.split(separator: "\n").map(String.init)
 	}
 
-	static func list() throws -> [String] {
+	static func list() -> [String] {
 		let lines = read()
 
 		guard let start = lines.lastIndex(where: { $0.contains("PackageConfigs") }) else {
