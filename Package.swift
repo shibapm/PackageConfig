@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "PackageConfig",
     products: [
-		.library(name: "PackageConfig", targets: ["PackageConfig"]),
+		.library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
 		.executable(name: "package-config", targets: ["PackageConfigExecutable"]),
 
 		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
