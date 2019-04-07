@@ -10,7 +10,7 @@ public struct PackageConfiguration: PackageConfig {
     }
     
     public subscript(string: String) -> Any? {
-        return configuration[string]
+        return configuration[string]?.jsonValue
     }
 }
 
