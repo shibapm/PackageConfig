@@ -1,13 +1,13 @@
-public struct PackageConfiguration: PackageConfig, Codable {
-    public static var fileName: String = "package-config.json"
+public struct PackageConfiguration: PackageConfig {
+    public static var fileName: String = "package-config"
     
-    public let configuration: [String: String]
+    public let configuration: [String: Any]
     
-    public init(_ configuration: [String: String]) {
+    public init(_ configuration: [String: Any]) {
         self.configuration = configuration
     }
     
-    public subscript(string: String) -> String? {
+    public subscript(string: String) -> Any? {
         return configuration[string]
     }
 }
