@@ -6,8 +6,8 @@ enum Writer {
         let jsonFolder = NSHomeDirectory() + "/.package-config"
         let jsonPath = jsonFolder + "/" + T.fileName
         
-        if !FileManager.default.fileExists(atPath: jsonPath) {
-            try! FileManager.default.createDirectory(atPath: jsonPath, withIntermediateDirectories: false, attributes: [:])
+        if !FileManager.default.fileExists(atPath: jsonFolder) {
+            try! FileManager.default.createDirectory(atPath: jsonFolder, withIntermediateDirectories: false, attributes: [:])
         }
 		let encoder = JSONEncoder()
 
