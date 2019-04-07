@@ -3,7 +3,7 @@ import Foundation
 enum Writer {
 
 	static func write<T: PackageConfig>(configuration: T) {
-        let jsonFolder = NSHomeDirectory() + ".package-config"
+        let jsonFolder = NSHomeDirectory() + "/.package-config"
         let jsonPath = jsonFolder + "/" + T.fileName
         
         if !FileManager.default.fileExists(atPath: jsonPath) {
