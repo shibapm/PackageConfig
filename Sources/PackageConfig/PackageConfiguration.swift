@@ -28,8 +28,8 @@ public struct PackageConfiguration: PackageConfig {
     }
 }
 
-public struct AnyType: Codable {
-    public var jsonValue: Any
+private struct AnyType: Codable {
+    var jsonValue: Any
     
     init(_ jsonValue: Any) {
         if let value = jsonValue as? [String: Any] {
@@ -41,7 +41,7 @@ public struct AnyType: Codable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         
         if let intValue = try? container.decode(Int.self) {
@@ -61,7 +61,7 @@ public struct AnyType: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         
         if let value = jsonValue as? Int {
@@ -89,7 +89,7 @@ public struct AnyType: Codable {
         return result
     }
     
-    private func deserialiseContent() -> Any {
+    func deserialiseContent() -> Any {
         if let value = jsonValue as? [String: AnyType] {
             return value.mapValues { $0.deserialiseContent() }
         } else if let value = jsonValue as? [AnyType] {
