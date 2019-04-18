@@ -4,6 +4,45 @@ A Swift Package that allows you to define configuration settings inside a `Packa
 
 Tool builders use this dependency to grab their config settings.
 
+## Package Configuration
+
+The fastest way to insert a configuration in your `Package.swift` is to add `PackageConfig` to your dependencies
+
+```swift
+.package(url: "https://github.com/orta/PackageConfig.git", from: "0.9.0")
+```
+
+And add the configuration right at the bottom of your `Package.swift`
+
+e.g.
+
+```
+#if canImport(PackageConfig)
+    import PackageConfig
+
+    let config = PackageConfiguration([
+        "komondor": [
+            "pre-push": "swift test",
+            "pre-commit": [
+                "swift test",
+                "swift run swiftformat .",
+                "swift run swiftlint autocorrect --path Sources/",
+                "git add .",
+            ],
+        ],
+        "rocket": [
+            "after": [
+            "push",
+            ],
+        ],
+    ]).write()
+#endif
+```
+
+## Custom Configuration Types
+
+`PackageConfig` offers also the possibility to create your own configuration type
+
 ### User writes:
 
 Run this line to have empty source for `PackageConfigs` target generated for you.

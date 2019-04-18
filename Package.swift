@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "PackageConfig",
     products: [
-		.library(name: "PackageConfig", targets: ["PackageConfig"]),
+		.library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
 		.executable(name: "package-config", targets: ["PackageConfigExecutable"]),
 
 		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
@@ -29,4 +29,14 @@ let package = Package(
 import ExampleConfig
 
 ExampleConfig(value: "example value").write()
+#endif
+
+#if canImport(PackageConfig)
+import PackageConfig
+
+PackageConfiguration(["example": [
+    ["example1": ""],
+    "example2",
+    3
+]]).write()
 #endif

@@ -18,11 +18,11 @@ enum DynamicLibraries {
 			.split(separator: "\n").map(String.init)
 	}
 
-	static func list() throws -> [String] {
+	static func list() -> [String] {
 		let lines = read()
 
 		guard let start = lines.lastIndex(where: { $0.contains("PackageConfigs") }) else {
-			throw Error("Could not find PackageConfigs target definition")
+			return []
 		}
 
 		let definition = lines.suffix(from: start)
@@ -33,7 +33,7 @@ enum DynamicLibraries {
 			.split(separator: "\n")
 
 		guard let end = definition.firstIndex(where: { $0.contains("]") }) else {
-			throw Error("Could not end PackageConfigs target definition")
+			return []
 		}
 
 		return definition.prefix(end + 1)
