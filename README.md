@@ -32,7 +32,7 @@ e.g.
         ],
         "rocket": [
             "after": [
-            "push",
+            	"push",
             ],
         ],
     ]).write()
