@@ -9,7 +9,7 @@ Tool builders use this dependency to grab their config settings.
 The fastest way to insert a configuration in your `Package.swift` is to add `PackageConfig` to your dependencies
 
 ```swift
-.package(url: "https://github.com/orta/PackageConfig.git", from: "0.9.0")
+.package(url: "https://github.com/shibapm/PackageConfig.git", from: "0.9.0")
 ```
 
 And add the configuration right at the bottom of your `Package.swift`
@@ -106,7 +106,7 @@ let package = Package(
         .executable(name: "example", targets: ["Example"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/orta/PackageConfig.git", from: "0.0.2"),
+        .package(url: "https://github.com/shibapm/PackageConfig.git", from: "0.0.2"),
     ],
     targets: [
         .target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
