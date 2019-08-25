@@ -7,7 +7,7 @@ import class Foundation.FileManager
 enum Package {
 	
 	static func compile() throws {
-		let swiftC = try runXCRun(tool: "swiftc")
+		let swiftC = try findPath(tool: "swiftc")
 		let process = Process()
 		let linkedLibraries = try libraryLinkingArguments()
 		var arguments = [String]()
@@ -33,15 +33,15 @@ enum Package {
 		debugLog("Finished launching swiftc")
 	}
 
-	static private func runXCRun(tool: String) throws -> String {
+	static private func findPath(tool: String) throws -> String {
 		let process = Process()
 		let pipe = Pipe()
 
-		process.launchPath = "/usr/bin/xcrun"
-		process.arguments = ["--find", tool]
+		process.launchPath = "/bin/bash"
+		process.arguments = ["-c", "command -v \(tool)"]
 		process.standardOutput = pipe
 
-		debugLog("CMD: \(process.launchPath!) \( ["--find", tool].joined(separator: " "))")
+		debugLog("CMD: \(process.launchPath!) \(process.arguments!.joined(separator: " "))")
 
 		process.launch()
 		process.waitUntilExit()
