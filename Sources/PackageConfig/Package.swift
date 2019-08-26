@@ -100,12 +100,35 @@ enum Package {
 		let fileManager = FileManager.default
 
 		let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
-		let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
-		#warning("TODO: handle //swift-tools-version:4.2 declarations")
-		let latestSPM = versions.sorted().last!
-		let libraryPathSPM = swiftPMDir + "/" + latestSPM
+		let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir).filter { $0 != "llbuild" }
+
+        let swiftToolsVersion = getSwiftToolsVersion()
+        let spmDir = versions.contains(swiftToolsVersion) ? swiftToolsVersion : versions.sorted().last!
+		let libraryPathSPM = swiftPMDir + "/" + spmDir
 
 		debugLog("Using SPM version: \(libraryPathSPM)")
 		return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription"]
 	}
+    
+    static private func getSwiftToolsVersion() -> String {
+        guard let data = FileManager.default.contents(atPath: "Package.swift") else {
+            return ""
+        }
+        
+        let contents = String(data: data, encoding: .utf8)
+        guard let version = contents?.components(separatedBy: "\n").first?.components(separatedBy: ":").last else {
+            return ""
+        }
+        
+        let semverParts = version.components(separatedBy: ".").map { Int($0) }
+        switch semverParts[0] {
+        case 4:
+            if semverParts[1]! < 2 {
+                return "4"
+            }
+            return "4_2"
+        default:
+            return "5"
+        }
+    }
 }
