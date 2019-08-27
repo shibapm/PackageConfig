@@ -102,22 +102,26 @@ enum Package {
 		let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
 		let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir).filter { $0 != "llbuild" }
 
-        let swiftToolsVersion = getSwiftToolsVersion()
-        let spmDir = versions.contains(swiftToolsVersion) ? swiftToolsVersion : versions.sorted().last!
-		let libraryPathSPM = swiftPMDir + "/" + spmDir
+        let latestVersion = versions.sorted().last!
+        var spmVersionDir = latestVersion
+        
+        if let swiftToolsVersion = getSwiftToolsVersion(), versions.contains(swiftToolsVersion) {
+            spmVersionDir = swiftToolsVersion
+        }
+        
+		let libraryPathSPM = swiftPMDir + "/" + spmVersionDir
 
 		debugLog("Using SPM version: \(libraryPathSPM)")
 		return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription"]
 	}
     
-    static private func getSwiftToolsVersion() -> String {
-        guard let data = FileManager.default.contents(atPath: "Package.swift") else {
-            return ""
+    static private func getSwiftToolsVersion() -> String? {
+        guard let contents = try? String(contentsOfFile: "Package.swift") else {
+            return nil
         }
-        
-        let contents = String(data: data, encoding: .utf8)
-        guard let version = contents?.components(separatedBy: "\n").first?.components(separatedBy: ":").last else {
-            return ""
+
+        guard let version = contents.components(separatedBy: "\n").first?.components(separatedBy: ":").last else {
+            return nil
         }
         
         let semverParts = version.components(separatedBy: ".").map { Int($0) }
