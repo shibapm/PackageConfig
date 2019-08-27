@@ -1,17 +1,16 @@
 import Foundation
 
 enum Package {
-
     static func compile() throws {
         let swiftC = try findPath(tool: "swiftc")
         let process = Process()
         let linkedLibraries = try libraryLinkingArguments()
         var arguments = [String]()
-            arguments += ["--driver-mode=swift"] // Eval in swift mode, I think?
-            arguments += getSwiftPMManifestArgs(swiftPath: swiftC) // SwiftPM lib
-            arguments += linkedLibraries
-            arguments += ["-suppress-warnings"] // SPM does that too
-             arguments += ["Package.swift"] // The Package.swift in the CWD
+        arguments += ["--driver-mode=swift"] // Eval in swift mode, I think?
+        arguments += getSwiftPMManifestArgs(swiftPath: swiftC) // SwiftPM lib
+        arguments += linkedLibraries
+        arguments += ["-suppress-warnings"] // SPM does that too
+        arguments += ["Package.swift"] // The Package.swift in the CWD
 
         // Create a process to eval the Swift Package manifest as a subprocess
         process.launchPath = swiftC
@@ -19,7 +18,7 @@ enum Package {
         process.standardOutput = FileHandle.standardOutput
         process.standardError = FileHandle.standardOutput
 
-        debugLog("CMD: \(swiftC) \( arguments.joined(separator: " "))")
+        debugLog("CMD: \(swiftC) \(arguments.joined(separator: " "))")
 
         // Evaluation of the package swift code will end up
         // creating a file in the tmpdir that stores the JSON
@@ -29,7 +28,7 @@ enum Package {
         debugLog("Finished launching swiftc")
     }
 
-    static private func findPath(tool: String) throws -> String {
+    private static func findPath(tool: String) throws -> String {
         let process = Process()
         let pipe = Pipe()
 
@@ -45,7 +44,7 @@ enum Package {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    static private func libraryPath(for library: String) -> String? {
+    private static func libraryPath(for library: String) -> String? {
         let fileManager = FileManager.default
         let libPaths = [
             ".build/debug",
@@ -64,7 +63,7 @@ enum Package {
         return libPaths.first(where: isLibPath)
     }
 
-    static private func libraryLinkingArguments() throws -> [String] {
+    private static func libraryLinkingArguments() throws -> [String] {
         let packageConfigLib = "PackageConfig"
         guard let packageConfigPath = libraryPath(for: packageConfigLib) else {
             throw Error("PackageConfig: Could not find lib\(packageConfigLib) to link against, is it possible you've not built yet?")
@@ -78,17 +77,16 @@ enum Package {
             return [
                 "-L", path,
                 "-I", path,
-                "-l\(libraryName)"
+                "-l\(libraryName)",
             ]
         }.reduce([
             "-L", packageConfigPath,
             "-I", packageConfigPath,
-            "-l\(packageConfigLib)"
+            "-l\(packageConfigLib)",
         ], +)
     }
 
-
-    static private func getSwiftPMManifestArgs(swiftPath: String) -> [String] {
+    private static func getSwiftPMManifestArgs(swiftPath: String) -> [String] {
         // using "xcrun --find swift" we get
         // /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
         // we need to transform it to something like:
@@ -110,26 +108,18 @@ enum Package {
         debugLog("Using SPM version: \(libraryPathSPM)")
         return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription"]
     }
-    
-    static private func getSwiftToolsVersion() -> String? {
+
+    private static func getSwiftToolsVersion() -> String? {
         guard let contents = try? String(contentsOfFile: "Package.swift") else {
             return nil
         }
 
         let range = NSRange(location: 0, length: contents.count)
-        guard let regex = try? NSRegularExpression(pattern: #"^// swift-tools-version:(?:(\d)\.(\d)(?:\.\d)?)$"#) else {
-            return nil
-        }
-
-        guard let match = regex.firstMatch(in: contents, options: [], range: range) else {
-            return nil
-        }
-
-        guard let majorRange = Range(match.range(at: 1), in: contents), let major = Int(contents[majorRange]) else {
-            return nil
-        }
-
-        guard let minorRange = Range(match.range(at: 2), in: contents), let minor = Int(contents[minorRange]) else {
+        guard let regex = try? NSRegularExpression(pattern: #"^// swift-tools-version:(?:(\d)\.(\d)(?:\.\d)?)$"#),
+            let match = regex.firstMatch(in: contents, options: [], range: range),
+            let majorRange = Range(match.range(at: 1), in: contents), let major = Int(contents[majorRange]),
+            let minorRange = Range(match.range(at: 2), in: contents), let minor = Int(contents[minorRange])
+        else {
             return nil
         }
 
