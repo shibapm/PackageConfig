@@ -1,8 +1,4 @@
-
-import class Foundation.Process
-import class Foundation.Pipe
-import class Foundation.FileHandle
-import class Foundation.FileManager
+import Foundation
 
 enum Package {
 	
@@ -120,14 +116,26 @@ enum Package {
             return nil
         }
 
-        guard let version = contents.components(separatedBy: "\n").first?.components(separatedBy: ":").last else {
+        let range = NSRange(location: 0, length: contents.count)
+        guard let regex = try? NSRegularExpression(pattern: #"^// swift-tools-version:(?:(\d)\.(\d)(?:\.\d)?)$"#) else {
             return nil
         }
         
-        let semverParts = version.components(separatedBy: ".").map { Int($0) }
-        switch semverParts[0] {
+        guard let match = regex.firstMatch(in: contents, options: [], range: range) else {
+            return nil
+        }
+        
+        guard let majorRange = Range(match.range(at: 1), in: contents), let major = Int(contents[majorRange]) else {
+            return nil
+        }
+        
+        guard let minorRange = Range(match.range(at: 2), in: contents), let minor = Int(contents[minorRange]) else {
+            return nil
+        }
+        
+        switch major {
         case 4:
-            if semverParts[1]! < 2 {
+            if minor < 2 {
                 return "4"
             }
             return "4_2"
