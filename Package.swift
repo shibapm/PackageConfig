@@ -7,21 +7,21 @@ let package = Package(
     name: "PackageConfig",
     products: [
 		.library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
-		.executable(name: "package-config", targets: ["PackageConfigExecutable"]),
+		.executable(name: "package-config", targets: ["PackageConfigExecutable"]), // dev
 
-		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]),
-		.executable(name: "package-config-example", targets: ["Example"]),
+		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]), // dev
+		.executable(name: "package-config-example", targets: ["Example"]), // dev
     ],
     dependencies: [
     ],
     targets: [
 		.target(name: "PackageConfig", dependencies: []),
-		.target(name: "PackageConfigExecutable", dependencies: []),
+		.target(name: "PackageConfigExecutable", dependencies: []), // dev
 
-		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]),
-		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]),
+		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]), // dev
+		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]), // dev
 
-//		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]),
+		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]), // dev
     ]
 )
 
