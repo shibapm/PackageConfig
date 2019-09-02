@@ -22,4 +22,4 @@ matrix:
         - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
         - swiftenv global 4.2
       script:
-        - swift test
+        - swift build
