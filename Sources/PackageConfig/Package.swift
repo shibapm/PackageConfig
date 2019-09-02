@@ -115,7 +115,7 @@ enum Package {
         }
 
         let range = NSRange(location: 0, length: contents.count)
-        guard let regex = try? NSRegularExpression(pattern: #"^// swift-tools-version:(?:(\d)\.(\d)(?:\.\d)?)$"#),
+        guard let regex = try? NSRegularExpression(pattern: "^// swift-tools-version:(?:(\\d)\\.(\\d)(?:\\.\\d)?)$"),
             let match = regex.firstMatch(in: contents, options: [], range: range),
             let majorRange = Range(match.range(at: 1), in: contents), let major = Int(contents[majorRange]),
             let minorRange = Range(match.range(at: 2), in: contents), let minor = Int(contents[minorRange])
