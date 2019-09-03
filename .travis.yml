@@ -13,6 +13,7 @@ matrix:
       osx_image: xcode10
       script:
         - swift build
+        - swift run package-config-example --verbose
 
     - os: linux
       language: generic
@@ -23,3 +24,4 @@ matrix:
         - swiftenv global 4.2
       script:
         - swift build
+        - swift run package-config-example --verbose
