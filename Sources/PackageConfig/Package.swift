@@ -2,7 +2,11 @@ import Foundation
 
 enum Package {
     static func compile() throws {
+        #if os(Linux)
         let swiftC = try findPath(tool: "swiftc")
+        #else
+        let swiftC = try runXCRun(tool: "swiftc")
+        #endif
         let process = Process()
         let linkedLibraries = try libraryLinkingArguments()
         var arguments = [String]()
@@ -28,6 +32,22 @@ enum Package {
         debugLog("Finished launching swiftc")
     }
 
+    static private func runXCRun(tool: String) throws -> String {
+        let process = Process()
+        let pipe = Pipe()
+        
+        process.launchPath = "/usr/bin/xcrun"
+        process.arguments = ["--find", tool]
+        process.standardOutput = pipe
+        
+        debugLog("CMD: \(process.launchPath!) \( ["--find", tool].joined(separator: " "))")
+        
+        process.launch()
+        process.waitUntilExit()
+        return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     private static func findPath(tool: String) throws -> String {
         let process = Process()
         let pipe = Pipe()
@@ -52,8 +72,8 @@ enum Package {
             ".build/release",
         ]
 
-        #warning("needs to be improved")
-        #warning("consider adding `/usr/lib` to libPath maybe")
+        // "needs to be improved"
+        // "consider adding `/usr/lib` to libPath maybe"
 
         func isLibPath(path: String) -> Bool {
             return fileManager.fileExists(atPath: path + "/lib\(library).dylib") || // macOS
