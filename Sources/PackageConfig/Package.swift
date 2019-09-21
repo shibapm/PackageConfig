@@ -35,19 +35,19 @@ enum Package {
     static private func runXCRun(tool: String) throws -> String {
         let process = Process()
         let pipe = Pipe()
-        
+
         process.launchPath = "/usr/bin/xcrun"
         process.arguments = ["--find", tool]
         process.standardOutput = pipe
-        
+
         debugLog("CMD: \(process.launchPath!) \( ["--find", tool].joined(separator: " "))")
-        
+
         process.launch()
         process.waitUntilExit()
         return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
+
     private static func findPath(tool: String) throws -> String {
         let process = Process()
         let pipe = Pipe()
@@ -150,7 +150,7 @@ enum Package {
             }
             return "4_2"
         default:
-            return "5"
+            return "5_1"
         }
     }
 }
