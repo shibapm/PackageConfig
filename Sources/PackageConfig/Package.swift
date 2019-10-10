@@ -126,7 +126,7 @@ enum Package {
         let libraryPathSPM = swiftPMDir + "/" + spmVersionDir
 
         debugLog("Using SPM version: \(libraryPathSPM)")
-        return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "--package-description-version", getSwiftToolsVersion() ?? "5"]
+        return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", getSwiftToolsVersion() ?? "5"]
     }
 
     private static func getSwiftToolsVersion() -> String? {
