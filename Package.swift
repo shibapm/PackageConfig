@@ -7,21 +7,21 @@ let package = Package(
     name: "PackageConfig",
     products: [
 		.library(name: "PackageConfig", type: .dynamic, targets: ["PackageConfig"]),
-		.executable(name: "package-config", targets: ["PackageConfigExecutable"]), // dev
+//		.executable(name: "package-config", targets: ["PackageConfigExecutable"]), // dev
 
-		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]), // dev
-		.executable(name: "package-config-example", targets: ["Example"]), // dev
+//		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]), // dev
+//		.executable(name: "package-config-example", targets: ["Example"]), // dev
     ],
     dependencies: [
     ],
     targets: [
 		.target(name: "PackageConfig", dependencies: []),
-		.target(name: "PackageConfigExecutable", dependencies: []), // dev
+//		.target(name: "PackageConfigExecutable", dependencies: []), // dev
 
-		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]), // dev
-		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]), // dev
+//		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]), // dev
+//		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]), // dev
 
-		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]), // dev
+//		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]), // dev
     ]
 )
 
