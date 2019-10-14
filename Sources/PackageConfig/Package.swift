@@ -118,15 +118,16 @@ enum Package {
 
         let latestVersion = versions.sorted().last!
         var spmVersionDir = latestVersion
+        let swiftToolsVersion = getSwiftToolsVersion()
 
-        if let swiftToolsVersion = getSwiftToolsVersion(), versions.contains(swiftToolsVersion) {
+        if let swiftToolsVersion = swiftToolsVersion, versions.contains(swiftToolsVersion) {
             spmVersionDir = swiftToolsVersion
         }
 
         let libraryPathSPM = swiftPMDir + "/" + spmVersionDir
 
         debugLog("Using SPM version: \(libraryPathSPM)")
-        return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", getSwiftToolsVersion() ?? "5"]
+        return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", swiftToolsVersion ?? "5"]
     }
 
     private static func getSwiftToolsVersion() -> String? {
