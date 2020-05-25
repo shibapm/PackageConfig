@@ -124,10 +124,11 @@ enum Package {
             spmVersionDir = swiftToolsVersion
         }
 
+        let packageDescriptionVersion = swiftToolsVersion?.replacingOccurrences(of: "_", with: ".")
         let libraryPathSPM = swiftPMDir + "/" + spmVersionDir
 
         debugLog("Using SPM version: \(libraryPathSPM)")
-        return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", swiftToolsVersion ?? "5"]
+        return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", packageDescriptionVersion ?? "5.2"]
     }
 
     private static func getSwiftToolsVersion() -> String? {
@@ -136,7 +137,7 @@ enum Package {
         }
 
         let range = NSRange(location: 0, length: contents.count)
-        guard let regex = try? NSRegularExpression(pattern: "^// swift-tools-version:(?:(\\d)\\.(\\d)(?:\\.\\d)?)$"),
+        guard let regex = try? NSRegularExpression(pattern: "^// swift-tools-version:(?:(\\d)\\.(\\d)(?:\\.\\d)?)"),
             let match = regex.firstMatch(in: contents, options: [], range: range),
             let majorRange = Range(match.range(at: 1), in: contents), let major = Int(contents[majorRange]),
             let minorRange = Range(match.range(at: 2), in: contents), let minor = Int(contents[minorRange])
@@ -151,7 +152,7 @@ enum Package {
             }
             return "4_2"
         default:
-            return "5_1"
+            return "\(major)_\(minor)"
         }
     }
 }
