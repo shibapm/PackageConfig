@@ -9,7 +9,7 @@ Tool builders use this dependency to grab their config settings.
 The fastest way to insert a configuration in your `Package.swift` is to add `PackageConfig` to your dependencies
 
 ```swift
-.package(url: "https://github.com/shibapm/PackageConfig.git", from: "0.9.0")
+.package(url: "https://github.com/shibapm/PackageConfig.git", from: "0.13.0")
 ```
 
 And add the configuration right at the bottom of your `Package.swift`
@@ -182,7 +182,7 @@ When you invoke `YourPackage.load()` it will compile the `Package.swift` in the 
 
 While compiling it will try to link list of dynamic libraries listed in `PackageConfigs` target.
 
-When it get's compiled it will run and when `YourPackage.write()` get's called your package configuration json will be written to temporary directory.
+When it is compiled, PackageConfig will run and when `YourPackage.write()` is called your package configuration json will be written to temporary directory.
 
 After that it will try to read the json and decode it as if it was `YourPackage` type, providing it back to where you have invoked `load` method.
 
