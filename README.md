@@ -16,7 +16,7 @@ And add the configuration right at the bottom of your `Package.swift`
 
 e.g.
 
-```
+```swift
 #if canImport(PackageConfig)
     import PackageConfig
 
