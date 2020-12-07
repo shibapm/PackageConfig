@@ -43,7 +43,7 @@ enum DynamicLibraries {
 			.map(String.init)
 			.map {
 				guard let comment = $0.range(of: "//")?.lowerBound else { return $0 }
-				return String($0.prefix(comment.encodedOffset))
+				return String($0[..<comment])
 			}
 			.joined()
 			.replacingOccurrences(of: "\t", with: "")
