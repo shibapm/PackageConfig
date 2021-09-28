@@ -114,7 +114,9 @@ enum Package {
         let fileManager = FileManager.default
 
         let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
-        let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir).filter { $0 != "llbuild" }
+        let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
+            .filter { $0 != "llbuild" }
+            .filter { $0.first?.isNumber ?? false }
 
         let latestVersion = versions.sorted().last!
         var spmVersionDir = latestVersion
