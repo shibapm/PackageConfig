@@ -122,18 +122,19 @@ enum Package {
         var spmVersionDir = latestVersion
         let swiftToolsVersion = getSwiftToolsVersion()
 
-        if let swiftToolsVersion = swiftToolsVersion, versions.contains(swiftToolsVersion) {
+        if let swiftToolsVersion = swiftToolsVersion.map({ folderPath(minor: $0.minor, major: $0.major) }),
+            versions.contains(swiftToolsVersion) {
             spmVersionDir = swiftToolsVersion
         }
 
-        let packageDescriptionVersion = swiftToolsVersion?.replacingOccurrences(of: "_", with: ".")
+        let packageDescriptionVersion = swiftToolsVersion.map { "\($0.major).\($0.minor)" }
         let libraryPathSPM = swiftPMDir + "/" + spmVersionDir
 
         debugLog("Using SPM version: \(libraryPathSPM)")
         return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", packageDescriptionVersion ?? "5.2"]
     }
 
-    private static func getSwiftToolsVersion() -> String? {
+    private static func getSwiftToolsVersion() -> PackageVersion? {
         guard let contents = try? String(contentsOfFile: "Package.swift") else {
             return nil
         }
@@ -147,14 +148,19 @@ enum Package {
             return nil
         }
 
-        switch major {
-        case 4:
-            if minor < 2 {
-                return "4"
-            }
+        return PackageVersion(minor: minor, major: major)
+    }
+    
+    private static func folderPath(minor: Int, major: Int) -> String {
+        if major == 4 && minor < 2 {
+            return "4"
+        } else {
             return "4_2"
-        default:
-            return "\(major)_\(minor)"
         }
+    }
+    
+    struct PackageVersion {
+        let minor: Int
+        let major: Int
     }
 }
