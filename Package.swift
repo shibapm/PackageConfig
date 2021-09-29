@@ -28,13 +28,13 @@ let package = Package(
 #if canImport(ExampleConfig)
 import ExampleConfig
 
-ExampleConfig(value: "example value").write()
+let example = ExampleConfig(value: "example value").write()
 #endif
 
 #if canImport(PackageConfig)
 import PackageConfig
 
-PackageConfiguration(["example": [
+let config = PackageConfiguration(["example": [
     ["example1": ""],
     "example2",
     3
