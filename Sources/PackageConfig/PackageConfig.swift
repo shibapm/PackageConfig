@@ -11,6 +11,8 @@ extension PackageConfig {
 
 	public static func load() throws -> Self {
 		try Package.compile()
+        try Package.otool()
+        try Package.runIfNeeded()
 		return try Loader.load()
 	}
 

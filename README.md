@@ -69,7 +69,7 @@ At the very bottom of the `Package.swift`
 import ExampleConfig
 
 // invoking write is mandatory, otherwise the config won't be written // thanks captain obvious
-ExampleConfig(value: "example value").write()
+let exampleConfig = ExampleConfig(value: "example value").write()
 #endif
 ```
 
@@ -79,7 +79,7 @@ If more than one dependency uses `PackageConfig` be sure to wrap each in
 #if canImport(SomeLibraryConfig)
 import SomeLibraryConfig
 
-SomeLibraryConfig().write()
+let someLibraryConfig = SomeLibraryConfig().write()
 #endif
 ```
 
@@ -169,7 +169,7 @@ Since `YourConfig` target is a dynamic library you must ensure that you have bui
   let config = PackageConfig([
       "danger" : ["disable"],
       "linter": ["rules": ["allowSomething"]]
-  ])
+  ]).write()
   #endif
   ```
 

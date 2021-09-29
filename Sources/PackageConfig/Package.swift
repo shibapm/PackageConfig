@@ -3,7 +3,7 @@ import Foundation
 enum Package {
     static func compile() throws {
         #if os(Linux)
-        let swiftC = try findPath(tool: "swiftc")
+        let swiftC = findPath(tool: "swiftc")
         #else
         let swiftC = try runXCRun(tool: "swiftc")
         #endif
@@ -14,13 +14,17 @@ enum Package {
         arguments += getSwiftPMManifestArgs(swiftPath: swiftC) // SwiftPM lib
         arguments += linkedLibraries
         arguments += ["-suppress-warnings"] // SPM does that too
+        arguments += ["-sdk"]
+        arguments += [findSDKPath()] // Add the SDK on which we need to compile into
         arguments += ["Package.swift"] // The Package.swift in the CWD
 
         // Create a process to eval the Swift Package manifest as a subprocess
         process.launchPath = swiftC
         process.arguments = arguments
-        process.standardOutput = FileHandle.standardOutput
-        process.standardError = FileHandle.standardOutput
+        let stdPipe = Pipe()
+        let errPipe = Pipe()
+        process.standardOutput = stdPipe
+        process.standardError = errPipe
 
         debugLog("CMD: \(swiftC) \(arguments.joined(separator: " "))")
 
@@ -29,7 +33,96 @@ enum Package {
         // settings when a new instance of PackageConfig is created
         process.launch()
         process.waitUntilExit()
+        debugLog(String(data: stdPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
+        debugLog(String(data: errPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
         debugLog("Finished launching swiftc")
+    }
+    
+    private static func installNameTool(rpath: String, dylib: String?) throws {
+        #if os(Linux)
+        let swiftC = try findPath(tool: "swiftc")
+        #else
+        let swiftC = try runXCRun(tool: "swiftc")
+        #endif
+        let process = Process()
+        let pipe = Pipe()
+        
+        process.launchPath = "/usr/bin/install_name_tool"
+        let arguments = ["-change", rpath, dylib ?? (getSwiftPMManifestArgs(swiftPath: swiftC)[1] + "/libPackageDescription.dylib"), "Package"]
+        process.arguments = arguments
+        process.standardOutput = pipe
+        
+        debugLog("CMD: \(process.launchPath!) \(arguments.joined(separator: " "))")
+        
+        process.launch()
+        process.waitUntilExit()
+
+        debugLog(String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
+    }
+    
+    static func otool() throws {
+        guard FileManager.default.fileExists(atPath: FileManager.default.currentDirectoryPath + "/Package") else { return }
+
+        let process = Process()
+        let pipe = Pipe()
+        
+        process.launchPath = "/usr/bin/otool"
+        let arguments = ["-L", "Package"]
+        process.arguments = arguments
+        process.standardOutput = pipe
+        
+        debugLog("CMD: \(process.launchPath!) \(arguments.joined(separator: " "))")
+        
+        process.launch()
+        process.waitUntilExit()
+
+        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
+        
+        let lines = output.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "\t", with: "").split(separator: "\n")
+        let missingLinks = lines.filter { $0.starts(with: "@rpath") }
+        
+        if let packageDescription = missingLinks.filter({ $0.contains("libPackageDescription") }).first {
+            try installNameTool(rpath: String(packageDescription.split(separator: " ").first!), dylib: nil)
+        }
+        
+        for missingLink in missingLinks.filter({ !$0.contains("libPackageDescription") }) {
+            try installNameTool(rpath: String(missingLink.split(separator: " ").first!), dylib: ".build/debug/\(missingLink.split(separator: " ").first!.replacingOccurrences(of: "@rpath/", with: ""))")
+        }
+        
+        let resultProcess = Process()
+        let resultPipe = Pipe()
+        
+        resultProcess.launchPath = "/usr/bin/otool"
+        let resultArguments = ["-L", "Package"]
+        resultProcess.arguments = resultArguments
+        resultProcess.standardOutput = resultPipe
+        
+        debugLog("CMD: \(process.launchPath!) \(arguments.joined(separator: " "))")
+        
+        resultProcess.launch()
+        resultProcess.waitUntilExit()
+        
+        debugLog(String(data: resultPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
+    }
+    
+    static func runIfNeeded() throws {
+        let currentDirectory = FileManager.default.currentDirectoryPath
+        
+        if FileManager.default.fileExists(atPath: currentDirectory + "/Package") {
+            debugLog("Running Package binary")
+            let process = Process()
+            let pipe = Pipe()
+
+            process.launchPath = currentDirectory + "/Package"
+            process.standardOutput = pipe
+            
+            process.launch()
+            process.waitUntilExit()
+            
+            debugLog(String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!)
+            
+            try FileManager.default.removeItem(at: URL(fileURLWithPath: currentDirectory + "/Package"))
+        }
     }
 
     static private func runXCRun(tool: String) throws -> String {
@@ -48,7 +141,7 @@ enum Package {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private static func findPath(tool: String) throws -> String {
+    private static func findPath(tool: String) -> String {
         let process = Process()
         let pipe = Pipe()
 
@@ -156,5 +249,22 @@ enum Package {
         default:
             return "\(major)_\(minor)"
         }
+    }
+    
+    private static func findSDKPath() -> String {
+        // xcrun --show-sdk-path
+        let process = Process()
+        let pipe = Pipe()
+
+        process.launchPath = "/usr/bin/xcrun"
+        process.arguments = ["--show-sdk-path"]
+        process.standardOutput = pipe
+
+        debugLog("CMD SDK path: \(process.launchPath!) \(process.arguments!.joined(separator: " "))")
+
+        process.launch()
+        process.waitUntilExit()
+        return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)!
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
