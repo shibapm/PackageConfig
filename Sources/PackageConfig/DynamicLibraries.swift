@@ -1,6 +1,8 @@
 
 import class Foundation.Process
 import class Foundation.Pipe
+import class Foundation.NSRegularExpression
+import struct Foundation.NSRange
 
 enum DynamicLibraries {
 
@@ -55,4 +57,24 @@ enum DynamicLibraries {
 			.replacingOccurrences(of: "\"\"", with: "\"")
 			.split(separator: "\"").map(String.init)
 	}
+    
+    static func listImports() -> [String] {
+        let lines = read()
+        
+        var matches: [String] = []
+
+        for line in lines {
+            if let match = line.range(of: "import .*Config", options: .regularExpression) {
+                matches.append(String(line[match]))
+            }
+        }
+        
+        debugLog("MATCHES: \(matches)")
+        
+        return matches
+            .compactMap { $0.split(separator: " ") }
+            .compactMap { $0.last }
+            .map(String.init)
+            .filter { !$0.contains("PackageDescription") }
+    }
 }

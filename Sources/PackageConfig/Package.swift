@@ -121,8 +121,21 @@ enum Package {
         guard let packageConfigPath = libraryPath(for: packageConfigLib) else {
             throw Error("PackageConfig: Could not find lib\(packageConfigLib) to link against, is it possible you've not built yet?")
         }
+        let dyLibs = try DynamicLibraries.listImports().map { (libraryName: String) -> [String] in
+            guard let path = libraryPath(for: libraryName) else {
+                throw Error("PackageConfig: Could not find lib\(libraryName) to link against, is it possible you've not built yet?")
+            }
 
-        return try DynamicLibraries.list().map { libraryName in
+            return [
+                "-L", path,
+                "-I", path,
+                "-l\(libraryName)",
+            ]
+        }.reduce([], +)
+        
+        debugLog("DYLIBS by IMPORT: \(dyLibs)")
+
+        let configLibs = try DynamicLibraries.list().map { libraryName in
             guard let path = libraryPath(for: libraryName) else {
                 throw Error("PackageConfig: Could not find lib\(libraryName) to link against, is it possible you've not built yet?")
             }
@@ -137,6 +150,10 @@ enum Package {
             "-I", packageConfigPath,
             "-l\(packageConfigLib)",
         ], +)
+        
+        debugLog("CONFIG LIBS: \(configLibs)")
+        
+        return dyLibs + configLibs
     }
 
     private static func getSwiftPMManifestArgs(swiftPath: String) -> [String] {
