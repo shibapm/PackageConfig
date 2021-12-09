@@ -162,22 +162,30 @@ enum Package {
         // we need to transform it to something like:
         // /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/4_2
         let fileManager = FileManager.default
-
         let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
+        #if swift(<5.5.2)
         let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
             .filter { $0 != "llbuild" }
             .filter { $0.first?.isNumber ?? false }
 
         let latestVersion = versions.sorted().last!
-        var spmVersionDir = latestVersion
+        var spmManifestDir = latestVersion
         let swiftToolsVersion = getSwiftToolsVersion()
 
         if let swiftToolsVersion = swiftToolsVersion, versions.contains(swiftToolsVersion) {
-            spmVersionDir = swiftToolsVersion
+            spmManifestDir = swiftToolsVersion
         }
+        #else
+        // Since Swift 5.5.2 there're no more different versions installed in the toolchain and it is stored
+        // in another directory
+        let directory = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
+            .first(where: { $0.starts(with: "Manifest") })
+        let spmManifestDir = swiftPMDir + "/" + directory!
+        #endif
+        
 
         let packageDescriptionVersion = swiftToolsVersion?.replacingOccurrences(of: "_", with: ".")
-        let libraryPathSPM = swiftPMDir + "/" + spmVersionDir
+        let libraryPathSPM = swiftPMDir + "/" + spmManifestDir
 
         debugLog("Using SPM version: \(libraryPathSPM)")
         return ["-L", libraryPathSPM, "-I", libraryPathSPM, "-lPackageDescription", "-package-description-version", packageDescriptionVersion ?? "5.2"]
