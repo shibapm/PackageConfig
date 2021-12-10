@@ -165,7 +165,6 @@ enum Package {
         let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
         let swiftToolsVersion = getSwiftToolsVersion()
         #if compiler(>=5.5.2)
-        debugLog("MORE 5.5.2")
         // Since Swift 5.5.2 there're no more different versions installed in the toolchain and it is stored
         // in another directory
         let directory = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
