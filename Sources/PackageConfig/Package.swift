@@ -163,24 +163,26 @@ enum Package {
         // /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/4_2
         let fileManager = FileManager.default
         let swiftPMDir = swiftPath.replacingOccurrences(of: "bin/swiftc", with: "lib/swift/pm")
-        #if swift(<5.5.2)
+        let swiftToolsVersion = getSwiftToolsVersion()
+        #if compiler(>=5.5.2)
+        debugLog("MORE 5.5.2")
+        // Since Swift 5.5.2 there're no more different versions installed in the toolchain and it is stored
+        // in another directory
+        let directory = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
+            .first(where: { $0.starts(with: "Manifest") })
+        let spmManifestDir = directory!
+        #else
+        debugLog("LESS 5.5.2")
         let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
             .filter { $0 != "llbuild" }
             .filter { $0.first?.isNumber ?? false }
 
         let latestVersion = versions.sorted().last!
         var spmManifestDir = latestVersion
-        let swiftToolsVersion = getSwiftToolsVersion()
 
         if let swiftToolsVersion = swiftToolsVersion, versions.contains(swiftToolsVersion) {
             spmManifestDir = swiftToolsVersion
         }
-        #else
-        // Since Swift 5.5.2 there're no more different versions installed in the toolchain and it is stored
-        // in another directory
-        let directory = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
-            .first(where: { $0.starts(with: "Manifest") })
-        let spmManifestDir = swiftPMDir + "/" + directory!
         #endif
         
 
