@@ -171,7 +171,6 @@ enum Package {
             .first(where: { $0.starts(with: "Manifest") })
         let spmManifestDir = directory!
         #else
-        debugLog("LESS 5.5.2")
         let versions = try! fileManager.contentsOfDirectory(atPath: swiftPMDir)
             .filter { $0 != "llbuild" }
             .filter { $0.first?.isNumber ?? false }
