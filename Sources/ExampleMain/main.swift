@@ -1,4 +1,3 @@
-
 import struct ExampleConfig.ExampleConfig
 
 do {
