@@ -10,7 +10,7 @@ let package = Package(
 		.executable(name: "package-config", targets: ["PackageConfigExecutable"]), // dev
 
 		.library(name: "ExampleConfig", type: .dynamic, targets: ["ExampleConfig"]), // dev
-		.executable(name: "package-config-example", targets: ["Example"]), // dev
+		.executable(name: "package-config-example", targets: ["ExampleMain"]), // dev
     ],
     dependencies: [
     ],
@@ -19,7 +19,7 @@ let package = Package(
 		.target(name: "PackageConfigExecutable", dependencies: []), // dev
 
 		.target(name: "ExampleConfig", dependencies: ["PackageConfig"]), // dev
-		.target(name: "Example", dependencies: ["PackageConfig", "ExampleConfig"]), // dev
+		.target(name: "ExampleMain", dependencies: ["PackageConfig", "ExampleConfig"]), // dev
 
 		.target(name: "PackageConfigs", dependencies: ["ExampleConfig"]), // dev
     ]
